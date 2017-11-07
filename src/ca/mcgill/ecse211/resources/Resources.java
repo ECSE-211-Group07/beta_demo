@@ -1,5 +1,9 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.resources;
 
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometryDisplay;
+import ca.mcgill.ecse211.sensor.ColorController;
+import ca.mcgill.ecse211.sensor.UltrasonicController;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;

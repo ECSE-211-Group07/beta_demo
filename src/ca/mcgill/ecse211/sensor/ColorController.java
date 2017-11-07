@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.sensor;
 
 public class ColorController {
 	private static float colorVal;

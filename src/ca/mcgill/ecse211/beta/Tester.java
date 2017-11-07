@@ -1,5 +1,12 @@
 package ca.mcgill.ecse211.beta;
 
+import ca.mcgill.ecse211.localization.LightLocalizer;
+import ca.mcgill.ecse211.localization.UltrasonicLocalizer;
+import ca.mcgill.ecse211.navigation.Navigation;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometryDisplay;
+import ca.mcgill.ecse211.resources.Resources;
+import ca.mcgill.ecse211.sensor.Poller;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
@@ -18,8 +25,6 @@ public class Tester {
 		final TextLCD t=LocalEV3.get().getTextLCD();
 		Odometer odometer = Resources.getOdometer();
 		OdometryDisplay odometryDisplay=new OdometryDisplay(odometer,t);
-		UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(odometer);
-		LightLocalizer lightLocalizer = new LightLocalizer(odometer);
 		Poller poller = new Poller(Resources.getUltrasonicController(), Resources.getColorController());
 		
 		int buttonChoice;
@@ -32,12 +37,21 @@ public class Tester {
 		odometer.start();
 		odometryDisplay.start();
 		poller.start();
-		usLocalizer.doLocalization();
+		
+		/*
+		 * If you are looking to stop the reverse, please look into doLocalization and 
+		 * remove Navigation.driveDistance call
+		 */
+		UltrasonicLocalizer.doLocalization();
 		Navigation.driveDistance(10, true);
-		lightLocalizer.doLocalization(1, 1);
+		LightLocalizer.doLocalization(1, 1);
 		Navigation.travelTo(1,  2);
+		/*
+		 * If you want to test Navigation more rigorously 
+		 * maybe add a LightLocalization call in between each instance
+		 */
 		Navigation.travelTo(2, 2);
-		lightLocalizer.doLocalization(2, 2);
+		LightLocalizer.doLocalization(2, 2);
 		
 		while(Button.waitForAnyPress()!=Button.ID_ESCAPE);
 		System.exit(0);
