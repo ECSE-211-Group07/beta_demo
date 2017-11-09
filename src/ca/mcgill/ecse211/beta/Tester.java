@@ -1,10 +1,9 @@
 package ca.mcgill.ecse211.beta;
 
-<<<<<<< HEAD
+
 import java.util.Map;
 
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
-=======
 import ca.mcgill.ecse211.localization.LightLocalizer;
 import ca.mcgill.ecse211.localization.UltrasonicLocalizer;
 import ca.mcgill.ecse211.navigation.Navigation;
@@ -12,17 +11,10 @@ import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometryDisplay;
 import ca.mcgill.ecse211.resources.Resources;
 import ca.mcgill.ecse211.sensor.Poller;
->>>>>>> 79c4aef00776170a8f78d7ec44dc2ec6f17cdd82
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.hardware.port.Port;
-import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.hardware.sensor.SensorModes;
-import lejos.robotics.SampleProvider;
 
 public class Tester {
 
@@ -36,13 +28,9 @@ public class Tester {
 		Resources resources = new Resources("A", "D", "B", "S4", "S1");
 		final TextLCD t = LocalEV3.get().getTextLCD();
 		Odometer odometer = Resources.getOdometer();
-<<<<<<< HEAD
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
-		UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(odometer);
-		LightLocalizer lightLocalizer = new LightLocalizer(odometer);
-=======
-		OdometryDisplay odometryDisplay=new OdometryDisplay(odometer,t);
->>>>>>> 79c4aef00776170a8f78d7ec44dc2ec6f17cdd82
+		UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer();
+		LightLocalizer lightLocalizer = new LightLocalizer();
 		Poller poller = new Poller(Resources.getUltrasonicController(), Resources.getColorController());
 
 		int buttonChoice, zipX = 0, zipY = 0;
@@ -61,23 +49,6 @@ public class Tester {
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 		}
-		System.out.println(" " + zipX + " " + zipY);
-		odometer.start();
-		odometryDisplay.start();
-		poller.start();
-<<<<<<< HEAD
-		usLocalizer.doLocalization();
-		// Navigation.turnTo(360, false);
-		Navigation.driveDistance(10, true);
-		lightLocalizer.doLocalization(1, 1);
-		Sound.beep();
-		Navigation.travelTo(zipX, zipY);
-		
-
-		while (Button.waitForAnyPress() != Button.ID_ESCAPE)
-			;
-=======
-		
 		/*
 		 * If you are looking to stop the reverse, please look into doLocalization and 
 		 * remove Navigation.driveDistance call
@@ -96,7 +67,6 @@ public class Tester {
 		Navigation.pointTo(90);
 		Navigation.driveZipline();
 		while(Button.waitForAnyPress()!=Button.ID_ESCAPE);
->>>>>>> 79c4aef00776170a8f78d7ec44dc2ec6f17cdd82
 		System.exit(0);
 
 	}

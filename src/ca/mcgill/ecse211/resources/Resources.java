@@ -26,12 +26,7 @@ public class Resources {
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
-<<<<<<< HEAD:src/ca/mcgill/ecse211/beta/Resources.java
-	//private static final double TRACK = 10.2;
-	private static final double TRACK = 15.6;
-=======
 	private static final double TRACK = 17.5;
->>>>>>> 79c4aef00776170a8f78d7ec44dc2ec6f17cdd82:src/ca/mcgill/ecse211/resources/Resources.java
 	private static final double RADIUS = 2.093;
 
 	
