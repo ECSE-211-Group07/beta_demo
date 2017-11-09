@@ -1,6 +1,8 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.navigation;
 
 
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.resources.Resources;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 
@@ -35,6 +37,13 @@ public class Navigation {
 	 * 
 	 * @param x x coordinate in coordinate grid robot needs to travel to
 	 * @param y y coordinate in coordinate grid robot needs to travel to
+	 */
+	
+	/*
+	 * TODO Define travelTo to work using only horizontal and lateral directions
+	 * Make sure that the point is within a certain error threshold, look at Odometer
+	 * to see where it is at, and if need be call travelTo again until it is no longer within that
+	 * threshold
 	 */
 	public static void travelTo(double x, double y) {
 		x= x*30.48;

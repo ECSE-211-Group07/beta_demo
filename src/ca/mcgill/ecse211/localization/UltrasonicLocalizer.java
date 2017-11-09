@@ -1,5 +1,9 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.localization;
 
+import ca.mcgill.ecse211.navigation.Navigation;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.resources.Resources;
+import ca.mcgill.ecse211.sensor.UltrasonicController;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -7,27 +11,17 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
 
 public class UltrasonicLocalizer {
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
-	private TextLCD LCD=LocalEV3.get().getTextLCD();
-	private Odometer odometer;
+	private static EV3LargeRegulatedMotor leftMotor = Resources.getLeftMotor();
+	private static EV3LargeRegulatedMotor rightMotor = Resources.getRightMotor();
+	private static TextLCD LCD=LocalEV3.get().getTextLCD();
+	private static Odometer odometer = Resources.getOdometer();
 
 	private static final int ROTATE_SPEED=70;
 	private static final int D=55;
-	private int distance;
 	private static int dT;
-	private double thetaA, thetaB;
+	private static double thetaA, thetaB;
 	
-	
-	public UltrasonicLocalizer(Odometer odometer) {
-		this.leftMotor=Resources.getLeftMotor();
-		this.rightMotor=Resources.getRightMotor();
-		this.odometer=odometer;
-	}
-	
-	public void doLocalization() {
-		Navigation.setAcceleration(200);
-		//this is a falling edge 
+	public static void doLocalization() {
 		fallingEdge();
 	}
 	
@@ -40,7 +34,7 @@ public class UltrasonicLocalizer {
 	 * 
 	 * @return nothing
 	 */
-	public void fallingEdge() {
+	private static void fallingEdge() {
 //		Navigation.turnTo(-360, false);
 		//set rotation speed
 		leftMotor.setSpeed(ROTATE_SPEED);
@@ -110,7 +104,7 @@ public class UltrasonicLocalizer {
 		odometer.setPosition(new double [] {0, 0, 0}, 
 				new boolean [] {true, true, true});
 		
-		Navigation.driveDistance(16, false);
+		// Navigation.driveDistance(16, false);
 	}
 	
 	
@@ -121,7 +115,7 @@ public class UltrasonicLocalizer {
 	 * @param theta which is the angle in degree
 	 * @return theta, which is the angle in degree between [0,360)
 	 */
-	public double normalizeTheta(double theta) {
+	private static double normalizeTheta(double theta) {
 		if (theta >= 360) {
 			theta = theta - 360;
 		}

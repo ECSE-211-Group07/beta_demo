@@ -1,38 +1,33 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.localization;
 
+import ca.mcgill.ecse211.navigation.Navigation;
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.resources.Resources;
+import ca.mcgill.ecse211.sensor.ColorController;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
 
 public class LightLocalizer {
-	
-	private float colorVal;
-	private Odometer odometer;
-	private static double SENSOR_DISTANCE = 14;//18
-	double [] lightData;
-	
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
 
-	/** Constructor for LightLocalization object that allows EV3 Robot to localize about a point (x, y) 
-	 *  using a light sensor and basic trigonometry 
-	 * @param odometer odometer that LightLocalization object will use
-	 * @param colorSensor color sensor that LightLocalization object will use
-	 * @param colorData colorData array of light sensor values that LightLocalization object will use
-	 * @param navigator navigator that LightLocalization object will use to travel and turn
-	 */
-	public LightLocalizer(Odometer odometer) {
-		this.odometer = odometer;
-		this.lightData = new double[5];
-		this.leftMotor = Resources.getLeftMotor();
-		this.rightMotor = Resources.getRightMotor();
-	}
+	private static Odometer odometer = Resources.getOdometer();
+	private static double SENSOR_DISTANCE = 14;//18
+	private static double[] lightData = new double[10];
+	
+	private static EV3LargeRegulatedMotor leftMotor = Resources.getLeftMotor();
+	private static EV3LargeRegulatedMotor rightMotor = Resources.getRightMotor();
 
 	/** Localizes about a point (x, y) by calling subsequent helper functions
 	 * @param x x coordinate relative to x = 0 to localize about
 	 * @param y y coordinate relative to y = 0 to localize about
 	 */
-	public void doLocalization(double x, double y) {
+	
+	/*
+	 * TODO We must add a condition where it localizes to the closest point it is at, ie if it has travelled
+	 * 30.48, 30.48 it will determine that it needs to localize on 1, 1
+	 * Takes away work from us
+	 */
+	public static void doLocalization(double x, double y) {
 
 		// goToApproxOrigin();
 
@@ -55,14 +50,15 @@ public class LightLocalizer {
 	/* Rotates sensor around the origin and saves the theta 
 	 * which the point was encoutered at
 	 */
-	private void rotateLightSensor() {
-		Navigation.turnTo(-360, true);
+	public static void rotateLightSensor() {
+		Navigation.turnTo(360, true);
 		int lineIndex=1;
 		while(Navigation.isNavigating()) {
 			if(ColorController.readColorData() > 0.20 && lineIndex < 5) {
 				lightData[lineIndex]=odometer.getThetaDegrees();
 				lineIndex++;
 				Sound.beep();
+
 			}
 		}
 	}
@@ -73,7 +69,7 @@ public class LightLocalizer {
 	 * @param x x value relative to x = 0 for which robot should correct its position towards
 	 * @param y y value relative to y = 0 for which robot should correct its position towards
 	 */
-	private void correctPosition(double x, double y) {
+	private static void correctPosition(double x, double y) {
 		//compute difference in angles
 		double deltaThetaY= Math.abs(lightData[1]-lightData[3]);
 		double deltaThetaX= Math.abs(lightData[2]-lightData[4]);

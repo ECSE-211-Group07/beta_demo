@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.odometer;
 
 import lejos.hardware.lcd.TextLCD;
 

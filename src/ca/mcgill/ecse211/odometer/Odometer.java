@@ -1,5 +1,6 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.odometer;
 
+import ca.mcgill.ecse211.resources.Resources;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /** Odometer uses the number of wheel rotations the robot has completed, along with some simple trigonometry to

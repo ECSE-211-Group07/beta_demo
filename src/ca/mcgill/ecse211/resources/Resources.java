@@ -1,5 +1,9 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.resources;
 
+import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometryDisplay;
+import ca.mcgill.ecse211.sensor.ColorController;
+import ca.mcgill.ecse211.sensor.UltrasonicController;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
@@ -22,8 +26,12 @@ public class Resources {
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
+<<<<<<< HEAD:src/ca/mcgill/ecse211/beta/Resources.java
 	//private static final double TRACK = 10.2;
 	private static final double TRACK = 15.6;
+=======
+	private static final double TRACK = 17.5;
+>>>>>>> 79c4aef00776170a8f78d7ec44dc2ec6f17cdd82:src/ca/mcgill/ecse211/resources/Resources.java
 	private static final double RADIUS = 2.093;
 
 	

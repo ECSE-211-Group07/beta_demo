@@ -1,6 +1,7 @@
-package ca.mcgill.ecse211.beta;
+package ca.mcgill.ecse211.sensor;
 
-import ca.mcgill.ecse211.beta.UltrasonicController;
+import ca.mcgill.ecse211.resources.Resources;
+import ca.mcgill.ecse211.sensor.UltrasonicController;
 import lejos.robotics.SampleProvider;
 
 public class Poller extends Thread {
