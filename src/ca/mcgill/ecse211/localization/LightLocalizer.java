@@ -12,7 +12,7 @@ public class LightLocalizer {
 
 	private static Odometer odometer = Resources.getOdometer();
 	private static double SENSOR_DISTANCE = 14;//18
-	private static double[] lightData = new double[5];
+	private static double[] lightData = new double[10];
 	
 	private static EV3LargeRegulatedMotor leftMotor = Resources.getLeftMotor();
 	private static EV3LargeRegulatedMotor rightMotor = Resources.getRightMotor();
@@ -49,14 +49,15 @@ public class LightLocalizer {
 	/* Rotates sensor around the origin and saves the theta 
 	 * which the point was encoutered at
 	 */
-	private static void rotateLightSensor() {
-		Navigation.turnTo(-360, true);
+	public static void rotateLightSensor() {
+		Navigation.turnTo(360, true);
 		int lineIndex=1;
 		while(Navigation.isNavigating()) {
 			if(ColorController.readColorData() > 0.20 && lineIndex < 5) {
 				lightData[lineIndex]=odometer.getThetaDegrees();
 				lineIndex++;
 				Sound.beep();
+
 			}
 		}
 	}

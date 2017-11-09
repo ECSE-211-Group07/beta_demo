@@ -26,7 +26,7 @@ public class Resources {
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
-	private static final double TRACK = 10.2;
+	private static final double TRACK = 17.5;
 	private static final double RADIUS = 2.093;
 
 	

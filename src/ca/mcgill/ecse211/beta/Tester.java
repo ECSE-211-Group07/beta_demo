@@ -45,14 +45,16 @@ public class Tester {
 		UltrasonicLocalizer.doLocalization();
 		Navigation.driveDistance(10, true);
 		LightLocalizer.doLocalization(1, 1);
-		Navigation.travelTo(1,  2);
+		Navigation.travelTo(1,  6);
+		Navigation.turnTo(-360, false);
 		/*
 		 * If you want to test Navigation more rigorously 
 		 * maybe add a LightLocalization call in between each instance
 		 */
-		Navigation.travelTo(2, 2);
-		LightLocalizer.doLocalization(2, 2);
-		
+		//Navigation.travelTo(2, 2);
+		LightLocalizer.doLocalization(1, 6);
+		Navigation.pointTo(90);
+		Navigation.driveZipline();
 		while(Button.waitForAnyPress()!=Button.ID_ESCAPE);
 		System.exit(0);
 		
