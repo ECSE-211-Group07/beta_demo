@@ -22,11 +22,11 @@ public class Resources {
 	private static EV3LargeRegulatedMotor zipMotor;
 	private static EV3UltrasonicSensor ultrasonicSensor;
 	private static UltrasonicController usCont;
-	private static EV3ColorSensor lightSensor;
+	private static EV3ColorSensor lightSensorLeft, lightSensorRight;
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
-	private static final double TRACK = 17.5;
+	private static final double TRACK = 17.4;
 	private static final double RADIUS = 2.093;
 
 	
@@ -41,11 +41,13 @@ public class Resources {
 	 * @param ultrasonicSensorPort Port at which the ultrasonic sensor is attached
 	 */
 	public Resources(String leftMotorPort, String rightMotorPort, 
-			String zipMotorPort, String lightSensorPort, String ultrasonicSensorPort) {
+			String zipMotorPort, String lightSensorPortLeft, String lightSensorPortRight, 
+			String ultrasonicSensorPort) {
 		leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(leftMotorPort));
 		rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(rightMotorPort));
 		zipMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(zipMotorPort));
-		lightSensor = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPort));
+		lightSensorLeft = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortLeft));
+		lightSensorRight = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortRight));
 		ultrasonicSensor = new EV3UltrasonicSensor(LocalEV3.get().getPort(ultrasonicSensorPort));
 		usCont = new UltrasonicController();
 		colorCont = new ColorController();
@@ -54,12 +56,21 @@ public class Resources {
 	}
 	
 	/**
-	 * Used to return the light sensor instance defined for the program
+	 * Used to return the light sensor on left of robot
 	 * 
 	 * @return EV3ColorSensor
 	 */
-	public static EV3ColorSensor getColorSensor() {
-		return lightSensor;
+	public static EV3ColorSensor getColorSensorLeft() {
+		return lightSensorLeft;
+	}
+	
+	/**
+	 * Used to return the light sensor on right of robot
+	 * 
+	 * @return EV3ColorSensor
+	 */
+	public static EV3ColorSensor getColorSensorRight() {
+		return lightSensorRight;
 	}
 	
 	public static ColorController getColorController() {
