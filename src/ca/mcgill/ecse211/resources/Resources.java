@@ -62,6 +62,9 @@ public class Resources {
 		return lightSensor;
 	}
 	
+	/** Used to return the ColorController which interfaces with the Poller class
+	 * @return ColorController
+	 */
 	public static ColorController getColorController() {
 		return colorCont;
 	}
@@ -130,6 +133,9 @@ public class Resources {
 		return ultrasonicSensor;
 	}
 	
+	/** Used to return the UltraSonicController which interfaces with the Poller class
+	 * @return UltrasonicController
+	 */
 	public static UltrasonicController getUltrasonicController() {
 		return usCont;
 	}

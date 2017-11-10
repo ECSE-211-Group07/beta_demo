@@ -15,10 +15,17 @@ public class Poller extends Thread {
 	private float[] colorData = new float[colorSensor.sampleSize()];
 	private ColorController colorCont;
 	
+	
+	/** Constructor for Poller object. The Poller class handles sampling all of our sensors and ensuring 
+	 * they interface properly with the corresponding sensor controllers
+	 * @param usCont
+	 * @param colorCont
+	 */
 	public Poller(UltrasonicController usCont, ColorController colorCont) {
 		this.usCont = usCont;
 		this.colorCont = colorCont;
 	}
+	
 	
 	public void run() {
 		int distance;
