@@ -42,6 +42,7 @@ public class LightLocalizer {
 		
 		
 		// travel to 0,0 then turn to the 0 angle
+		Sound.beep();
 		Navigation.travelTo(x, y);
 		// Navigation.setSpeed(0,0);
 		
