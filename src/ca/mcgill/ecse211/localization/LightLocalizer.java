@@ -37,7 +37,6 @@ public class LightLocalizer {
 
 		// goToApproxOrigin();
 
-		Navigation.pointTo(45);
 		// Will rotate the robot and collect lines
 		rotateLightSensor();
 		
@@ -48,9 +47,10 @@ public class LightLocalizer {
 		// travel to 0,0 then turn to the 0 angle
 		Sound.beep();
 		Navigation.travelTo(x, y);
+		
 		// Navigation.setSpeed(0,0);
 		
-		// Navigation.pointTo(0);
+		Navigation.pointTo(0);
 	}
 	
 	
