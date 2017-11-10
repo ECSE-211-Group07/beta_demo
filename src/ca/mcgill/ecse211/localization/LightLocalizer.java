@@ -36,7 +36,7 @@ public class LightLocalizer {
 	public static void doLocalization(double x, double y) {
 
 		// goToApproxOrigin();
-
+		Navigation.pointTo(45);
 		// Will rotate the robot and collect lines
 		rotateLightSensor();
 		

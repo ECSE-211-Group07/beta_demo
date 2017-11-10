@@ -57,6 +57,7 @@ public class Tester {
 //		} catch (Exception e) {
 //			System.err.println("Error: " + e.getMessage());
 //		}
+		
 		/*
 		 * If you are looking to stop the reverse, please look into doLocalization and 
 		 * remove Navigation.driveDistance call
@@ -64,18 +65,20 @@ public class Tester {
 //
 //		Navigation.turnTo(-360*10, true);
 //		
-//		UltrasonicLocalizer.doLocalization();
+		
+		resources.getOdometer().setPosition(new double [] {30.48, 30.48, 0}, 
+				new boolean [] {true, true, true});
+		
+		Navigation.travelToCorrection(6, 1);
+		//		UltrasonicLocalizer.doLocalization();
 //		Navigation.driveDistance(10, true);
-		LightLocalizer.doLocalization(1, 1);
-//		
-//		// Navigation.driveDistance(16, false);
-//		Navigation.travelTo(1, 1);
+//		LightLocalizer.doLocalization(1, 1);
+////		
+////		// Navigation.driveDistance(16, false);
+////		Navigation.travelTo(1, 1);
 //		Sound.beep();
 //		Navigation.travelTo(1,  6);
-		/*
-		 * If you want to test Navigation more rigorously 
-		 * maybe add a LightLocalization call in between each instance
-		 */
+
 		//Navigation.travelTo(2, 2);
 //		LightLocalizer.doLocalization(1, 6);
 //		Navigation.pointTo(90);

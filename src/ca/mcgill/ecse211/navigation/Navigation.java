@@ -3,6 +3,7 @@ package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.resources.Resources;
+import ca.mcgill.ecse211.sensor.ColorController;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 
@@ -86,6 +87,11 @@ public class Navigation {
 	}	
 
 	
+	public static void travelToCorrection(double x, double y) {
+
+	}
+	
+	
 	/**
 	 * Designed to rotate the robot a preset number of degrees
 	 * 
@@ -109,8 +115,14 @@ public class Navigation {
 	 * @param theta The final orientation desired
 	 */
 	public static void pointTo(double theta) {
-		double angleToTurn = theta - odometer.getThetaDegrees();
-		turnTo(angleToTurn % 360, false);
+		double minAngle = theta - odometer.getThetaDegrees()%360;
+		if (minAngle < -180) {
+			minAngle = 360 + minAngle;
+		} else if (minAngle > 180) {
+			minAngle = minAngle - 360;
+		}
+		
+		turnTo(minAngle, false);
 	}
 	
 	
