@@ -10,6 +10,10 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
 
+/** Class that enables robot to localize to theta = 0 using ultrasonic sensor
+ * @author Marine Huynh, Sihui Shen
+ *
+ */
 public class UltrasonicLocalizer {
 	private static EV3LargeRegulatedMotor leftMotor = Resources.getLeftMotor();
 	private static EV3LargeRegulatedMotor rightMotor = Resources.getRightMotor();

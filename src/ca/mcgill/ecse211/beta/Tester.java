@@ -33,7 +33,7 @@ public class Tester {
 		Poller poller = new Poller(Resources.getUltrasonicController(), Resources.getColorController());
 		ColorController color = new ColorController();
 
-		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+		//WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
 		int buttonChoice, zipX = 0, zipY = 0;
 		
@@ -48,15 +48,15 @@ public class Tester {
 		// odometryDisplay.start();
 		poller.start();
 
-		try {
-			Map data = conn.getData();
-
-			zipX = ((Long) data.get("ZC_R_x")).intValue();
-			zipY = ((Long) data.get("ZC_R_y")).intValue();
-
-		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
-		}
+//		try {
+//			Map data = conn.getData();
+//
+//			zipX = ((Long) data.get("ZC_R_x")).intValue();
+//			zipY = ((Long) data.get("ZC_R_y")).intValue();
+//
+//		} catch (Exception e) {
+//			System.err.println("Error: " + e.getMessage());
+//		}
 		/*
 		 * If you are looking to stop the reverse, please look into doLocalization and 
 		 * remove Navigation.driveDistance call

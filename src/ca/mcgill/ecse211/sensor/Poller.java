@@ -4,6 +4,10 @@ import ca.mcgill.ecse211.resources.Resources;
 import ca.mcgill.ecse211.sensor.UltrasonicController;
 import lejos.robotics.SampleProvider;
 
+/** Class that handles consistently sampling sensors and interfacing with sensor controllers
+ * @author Adam Gobran, Ali Shobeiri
+ *
+ */
 public class Poller extends Thread {
 	private SampleProvider us = Resources.getUltrasonicSensor();
 	private SampleProvider usDistance = Resources.getUltrasonicSensor().getMode("Distance");

@@ -8,6 +8,10 @@ import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
 
+/** Class that enables us to light localize to x = 0, y = 0 using color sensor
+ * @author Adam Gobran, Ali Shobeiri, Abe Yesgat, Reda El Khili
+ *
+ */
 public class LightLocalizer {
 
 	private static Odometer odometer = Resources.getOdometer();

@@ -1,5 +1,9 @@
 package ca.mcgill.ecse211.sensor;
 
+/** UltrasonicController class that interfaces with Poller class to process readings from ultrasonic sensor
+ * @author Adam Gobran, Ali Shobeiri
+ *
+ */
 public class UltrasonicController {
 	private static int distance;
 	public static Object lock = new Object();
