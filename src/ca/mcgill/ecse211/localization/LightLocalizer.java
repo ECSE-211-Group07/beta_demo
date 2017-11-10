@@ -15,7 +15,7 @@ import lejos.robotics.SampleProvider;
 public class LightLocalizer {
 
 	private static Odometer odometer = Resources.getOdometer();
-	private static double SENSOR_DISTANCE = 9.2;//18
+	private static double SENSOR_DISTANCE = 15;//18
 	private static double[] lightData = new double[5];
 	private static double[] lightDataRight = new double[5];
 	private static double[] lightDataLeft = new double[5];
