@@ -20,7 +20,7 @@ public class Navigation {
 	private static final double RADIUS = Resources.getRadius();
 	private static final double TRACK = Resources.getTrack();
 
-	public static final int FORWARD_SPEED = 250, ROTATE_SPEED = 100, MOTOR_ACCELERATION = 50;
+	public static final int FORWARD_SPEED = 250, ROTATE_SPEED = 150, MOTOR_ACCELERATION = 50;
 
 	
 
@@ -75,10 +75,15 @@ public class Navigation {
 		leftMotor.rotate(convertDistance(RADIUS,distance), true);
 		rightMotor.rotate(convertDistance(RADIUS, distance), false);
 
+		double error = Math.sqrt(Math.pow(odometer.getX() - x, 2) + Math.pow(odometer.getY() - y, 2));
+		System.out.println(error);
+		if (error > 1) {
+			travelTo(x/30.48, y/30.48);
+		}
+		
 		leftMotor.stop(true);
 		rightMotor.stop(true);
-	}
-	
+	}	
 
 	
 	/**
@@ -105,7 +110,6 @@ public class Navigation {
 	 */
 	public static void pointTo(double theta) {
 		double angleToTurn = theta - odometer.getThetaDegrees();
-		System.out.println("Angle to turn: " + angleToTurn % 360);
 		turnTo(angleToTurn % 360, false);
 	}
 	

@@ -11,8 +11,10 @@ import lejos.robotics.SampleProvider;
 public class LightLocalizer {
 
 	private static Odometer odometer = Resources.getOdometer();
-	private static double SENSOR_DISTANCE = 14;//18
-	private static double[] lightData = new double[10];
+	private static double SENSOR_DISTANCE = 9.2;//18
+	private static double[] lightData = new double[5];
+	private static double[] lightDataRight = new double[5];
+	private static double[] lightDataLeft = new double[5];
 	
 	private static EV3LargeRegulatedMotor leftMotor = Resources.getLeftMotor();
 	private static EV3LargeRegulatedMotor rightMotor = Resources.getRightMotor();
@@ -31,6 +33,7 @@ public class LightLocalizer {
 
 		// goToApproxOrigin();
 
+		Navigation.pointTo(45);
 		// Will rotate the robot and collect lines
 		rotateLightSensor();
 		
@@ -41,9 +44,9 @@ public class LightLocalizer {
 		// travel to 0,0 then turn to the 0 angle
 		Sound.beep();
 		Navigation.travelTo(x, y);
-		
-		Navigation.pointTo(0);
 		// Navigation.setSpeed(0,0);
+		
+		// Navigation.pointTo(0);
 	}
 	
 	
@@ -52,14 +55,28 @@ public class LightLocalizer {
 	 */
 	public static void rotateLightSensor() {
 		Navigation.turnTo(360, true);
-		int lineIndex=1;
+		int lineIndexLeft=1;
+		int lineIndexRight=1;
 		while(Navigation.isNavigating()) {
-			if(ColorController.readColorData() > 0.20 && lineIndex < 5) {
-				lightData[lineIndex]=odometer.getThetaDegrees();
-				lineIndex++;
+			if(ColorController.leftLineDetected() && lineIndexLeft < 5) {
+				lightDataLeft[lineIndexLeft]=odometer.getThetaDegrees();
+				lineIndexLeft++;
 				Sound.beep();
-
 			}
+			
+			if(ColorController.rightLineDetected() && lineIndexRight < 5) {
+				lightDataRight[lineIndexRight]=odometer.getThetaDegrees();
+				lineIndexRight++;
+				Sound.beepSequence();
+			}
+		}
+		
+		averageValues();
+	}
+	
+	private static void averageValues() {
+		for (int i=1; i < 5; i++) {
+			lightData[i] = (lightDataLeft[i] + lightDataRight[i])/2;
 		}
 	}
 	
@@ -71,8 +88,8 @@ public class LightLocalizer {
 	 */
 	private static void correctPosition(double x, double y) {
 		//compute difference in angles
-		double deltaThetaY= Math.abs(lightData[1]-lightData[3]);
-		double deltaThetaX= Math.abs(lightData[2]-lightData[4]);
+		double deltaThetaY= Math.abs(lightData[2]-lightData[4]);
+		double deltaThetaX= Math.abs(lightData[1]-lightData[3]);
 		
 		//use trig to determine position of the robot 
 		double Xnew = (x * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
