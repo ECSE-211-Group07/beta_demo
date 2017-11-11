@@ -209,7 +209,7 @@ public class Odometer extends Thread {
 	 */
 	public void setTheta(double theta) {
 		synchronized (lock) {
-			this.theta = theta;
+			this.theta = Math.toRadians(theta);
 		}
 	}
 

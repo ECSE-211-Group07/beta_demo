@@ -47,7 +47,7 @@ public class Navigation {
 	 * to see where it is at, and if need be call travelTo again until it is no longer within that
 	 * threshold
 	 */
-	public static void travelTo(double x, double y, boolean correction) {
+	public static void travelTo(double x, double y) {
 		x= x*30.48;
 		y= y*30.48;
 		
@@ -75,7 +75,7 @@ public class Navigation {
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 		leftMotor.rotate(convertDistance(RADIUS,distance), true);
-		rightMotor.rotate(convertDistance(RADIUS, distance), correction);
+		rightMotor.rotate(convertDistance(RADIUS, distance), false);
 		
 
 		leftMotor.stop(true);
@@ -84,6 +84,91 @@ public class Navigation {
 
 	
 	public static void travelToCorrection(double x, double y) {
+		travelToCorrect(x, y);
+	}
+	
+	public static void travelToCorrect(double x, double y) {
+		double error = Math.sqrt(Math.pow(odometer.getX() - x*30.48, 2) + Math.pow(odometer.getY() - y*30.48, 2));
+		System.out.println("Error: " + error);
+		System.out.println("X: " + x);
+		System.out.println("Y: " + y);
+		if (error < 2) {
+			return;
+		}
+		travelToFree(x, y);
+		
+		while (isNavigating()) {
+			if (ColorController.leftLineDetected() && ColorController.rightLineDetected()) {
+				Sound.beep();
+			}
+			else if (ColorController.leftLineDetected() && !ColorController.rightLineDetected()) {
+				adjustRightMotor();
+				break;
+			} 
+			else if (ColorController.rightLineDetected() && !ColorController.leftLineDetected()) {
+				adjustLeftMotor();
+				break;
+			}
+		}
+		
+		System.out.println("Theta before: " + odometer.getThetaDegrees());
+		odometer.setTheta(getHeading());
+		System.out.println("Theta after: " + odometer.getThetaDegrees());
+		travelToCorrect(x, y);
+	}
+	
+	public static void adjustRightMotor() {
+		double startTime = System.currentTimeMillis();
+		startSynchronization();
+		leftMotor.stop();
+		rightMotor.stop();
+		endSynchronization();
+		rightMotor.forward();
+		while (!ColorController.rightLineDetected()) {
+			if (System.currentTimeMillis() - startTime > 2000) {
+				rightMotor.backward();
+			}
+			rightMotor.setSpeed(100);
+		}
+		leftMotor.stop();
+		rightMotor.stop();
+	}
+	
+	public static void adjustLeftMotor() {
+		double startTime = System.currentTimeMillis();
+		startSynchronization();
+		leftMotor.stop();
+		rightMotor.stop();
+		endSynchronization();
+		leftMotor.forward();
+		while (!ColorController.leftLineDetected()) {
+			if (System.currentTimeMillis() - startTime > 2000) {
+				leftMotor.backward();
+			}
+			leftMotor.setSpeed(100);
+		}
+		rightMotor.stop();
+		leftMotor.stop();
+	}
+	
+	public static double getHeading() {
+		double currentHeading = odometer.getThetaDegrees();
+		
+		if (currentHeading < 100 && currentHeading > 80) {
+			return 90.0;
+		} else if (odometer.getTheta() < 10 || (odometer.getTheta() > 350 && odometer.getTheta() < 360)) {
+			return 0.0;
+		} else if (currentHeading < 190 && currentHeading >  170) {
+			return 180.0;
+		} else if (currentHeading < 280 && currentHeading > 260) {
+			return 270.0;
+		} else {
+			return currentHeading;
+		}
+	}
+	
+	
+	public static void travelToFree(double x, double y) {
 		x= x*30.48;
 		y= y*30.48;
 		
@@ -93,7 +178,8 @@ public class Navigation {
 		
 		// Calculate the degree you need to change to
 		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
-		
+		System.out.println("Min angle: " + minAngle);
+	
 		if (minAngle < -180) {
 			minAngle = 360 + minAngle;
 		} else if (minAngle > 180) {
@@ -111,38 +197,9 @@ public class Navigation {
 		rightMotor.setSpeed(FORWARD_SPEED);
 		leftMotor.rotate(convertDistance(RADIUS,distance), true);
 		rightMotor.rotate(convertDistance(RADIUS, distance), true);
-		
-		while (isNavigating()) {
-			if (ColorController.leftLineDetected() && !ColorController.rightLineDetected()) {
-				adjustRightMotor();
-			} else if (ColorController.rightLineDetected() && !ColorController.leftLineDetected()) {
-				adjustLeftMotor();
-			}
-		}
-		
+		double startTime = System.currentTimeMillis(); 
+		while (!(System.currentTimeMillis() - startTime > 2000));
 	}
-	
-	public static void adjustRightMotor() {
-		leftMotor.stop();
-		rightMotor.setSpeed(1);
-		while (!ColorController.rightLineDetected()) {
-			rightMotor.setSpeed(40);
-			rightMotor.forward();
-		}
-		rightMotor.stop();
-	}
-	
-	public static void adjustLeftMotor() {
-		rightMotor.stop();
-		leftMotor.setSpeed(1);
-		while (!ColorController.leftLineDetected()) {
-			leftMotor.setSpeed(40);
-			leftMotor.forward();
-		}
-		leftMotor.stop();
-		
-	}
-	
 	
 	/**
 	 * Designed to rotate the robot a preset number of degrees

@@ -44,8 +44,10 @@ public class Tester {
 			buttonChoice = Button.waitForAnyPress();
 		} while (buttonChoice != Button.ID_ENTER);
 
+		t.clear();
+		
 		odometer.start();
-		// odometryDisplay.start();
+		odometryDisplay.start();
 		poller.start();
 
 //		try {
@@ -66,16 +68,18 @@ public class Tester {
 //		Navigation.turnTo(-360*10, true);
 //		
 		
-		resources.getOdometer().setPosition(new double [] {30.48, 30.48, 0}, 
-				new boolean [] {true, true, true});
-		// LightLocalizer.doLocalization(1, 1);
-		// Navigation.travelToCorrection(1, 3);
+		UltrasonicLocalizer.doLocalization();
+		Navigation.driveDistance(5, true);
+		LightLocalizer.doLocalization(1, 1);
+		Navigation.travelToCorrection(1, 6);
+		LightLocalizer.doLocalization(1, 6);
+		Navigation.pointTo(90);
+		Navigation.driveZipline();
 		//		UltrasonicLocalizer.doLocalization();
-		Sound.beep();
 //		Navigation.driveDistance(10, true);
 //		LightLocalizer.doLocalization(1, 1);
 ////		
-		Navigation.travelToCorrection(1, 3);
+		// Navigation.travelToCorrection(1, 3);
 ////		// Navigation.driveDistance(16, false);
 ////		Navigation.travelTo(1, 1);
 //		Sound.beep();

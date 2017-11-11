@@ -1,5 +1,6 @@
 package ca.mcgill.ecse211.resources;
 
+import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometryDisplay;
 import ca.mcgill.ecse211.sensor.ColorController;
@@ -53,6 +54,8 @@ public class Resources {
 		colorCont = new ColorController();
 		// this instance
 		odometer = new Odometer();
+		
+		Navigation.synchronizeMotors();
 	}
 	
 	/**
