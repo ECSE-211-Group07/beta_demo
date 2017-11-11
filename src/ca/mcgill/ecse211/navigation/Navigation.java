@@ -4,6 +4,7 @@ package ca.mcgill.ecse211.navigation;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.resources.Resources;
 import ca.mcgill.ecse211.sensor.ColorController;
+import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 
@@ -21,7 +22,7 @@ public class Navigation {
 	private static final double RADIUS = Resources.getRadius();
 	private static final double TRACK = Resources.getTrack();
 
-	public static final int FORWARD_SPEED = 250, ROTATE_SPEED = 150, MOTOR_ACCELERATION = 50;
+	public static final int FORWARD_SPEED = 200, ROTATE_SPEED = 125, MOTOR_ACCELERATION = 50;
 
 	
 
@@ -46,7 +47,7 @@ public class Navigation {
 	 * to see where it is at, and if need be call travelTo again until it is no longer within that
 	 * threshold
 	 */
-	public static void travelTo(double x, double y) {
+	public static void travelTo(double x, double y, boolean correction) {
 		x= x*30.48;
 		y= y*30.48;
 		
@@ -74,21 +75,72 @@ public class Navigation {
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 		leftMotor.rotate(convertDistance(RADIUS,distance), true);
-		rightMotor.rotate(convertDistance(RADIUS, distance), false);
-
-		double error = Math.sqrt(Math.pow(odometer.getX() - x, 2) + Math.pow(odometer.getY() - y, 2));
-		System.out.println(error);
-		if (error > 1) {
-			travelTo(x/30.48, y/30.48);
-		}
+		rightMotor.rotate(convertDistance(RADIUS, distance), correction);
 		
+
 		leftMotor.stop(true);
 		rightMotor.stop(true);
 	}	
 
 	
 	public static void travelToCorrection(double x, double y) {
-
+		x= x*30.48;
+		y= y*30.48;
+		
+		
+		double deltaX = x - odometer.getX();
+		double deltaY = y - odometer.getY();
+		
+		// Calculate the degree you need to change to
+		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
+		
+		if (minAngle < -180) {
+			minAngle = 360 + minAngle;
+		} else if (minAngle > 180) {
+			minAngle = minAngle - 360;
+		}
+		
+		// turn to the minimum angle
+		turnTo(minAngle, false);
+		
+		// calculate the distance to next point
+		double distance  = Math.hypot(deltaX, deltaY);
+		
+		// move to the next point
+		leftMotor.setSpeed(FORWARD_SPEED);
+		rightMotor.setSpeed(FORWARD_SPEED);
+		leftMotor.rotate(convertDistance(RADIUS,distance), true);
+		rightMotor.rotate(convertDistance(RADIUS, distance), true);
+		
+		while (isNavigating()) {
+			if (ColorController.leftLineDetected() && !ColorController.rightLineDetected()) {
+				adjustRightMotor();
+			} else if (ColorController.rightLineDetected() && !ColorController.leftLineDetected()) {
+				adjustLeftMotor();
+			}
+		}
+		
+	}
+	
+	public static void adjustRightMotor() {
+		leftMotor.stop();
+		rightMotor.setSpeed(1);
+		while (!ColorController.rightLineDetected()) {
+			rightMotor.setSpeed(40);
+			rightMotor.forward();
+		}
+		rightMotor.stop();
+	}
+	
+	public static void adjustLeftMotor() {
+		rightMotor.stop();
+		leftMotor.setSpeed(1);
+		while (!ColorController.leftLineDetected()) {
+			leftMotor.setSpeed(40);
+			leftMotor.forward();
+		}
+		leftMotor.stop();
+		
 	}
 	
 	
