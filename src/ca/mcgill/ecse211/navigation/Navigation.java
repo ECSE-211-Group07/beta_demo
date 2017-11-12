@@ -84,7 +84,8 @@ public class Navigation {
 
 	
 	public static void travelToCorrection(double x, double y) {
-		travelToCorrect(x, y);
+		travelToCorrect(x, odometer.getY()/30.48);
+		travelToCorrect(odometer.getX()/30.48, y);
 	}
 	
 	public static void travelToCorrect(double x, double y) {
