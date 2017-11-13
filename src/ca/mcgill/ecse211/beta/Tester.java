@@ -25,7 +25,7 @@ public class Tester {
 
 	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) {
-		Resources resources = new Resources("A", "D", "B", "S2", "S4", "S1");
+		Resources resources = new Resources("A", "D", "B", "S2", "S4", "S3", "S1");
 		final TextLCD t=LocalEV3.get().getTextLCD();
 		Odometer odometer = Resources.getOdometer();
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
@@ -50,6 +50,7 @@ public class Tester {
 		odometryDisplay.start();
 		poller.start();
 
+
 //		try {
 //			Map data = conn.getData();
 //
@@ -68,12 +69,13 @@ public class Tester {
 //		Navigation.turnTo(-360*10, true);
 //		
 		
-		UltrasonicLocalizer.doLocalization();
-		Navigation.driveDistance(5, true);
-		LightLocalizer.doLocalization(1, 1);
-		Navigation.travelToCorrection(1, 6);
-		LightLocalizer.doLocalization(1, 6);
-		Navigation.pointTo(90);
+//		Navigation.driveDistance(5, true);
+//		UltrasonicLocalizer.doLocalization();
+//		Navigation.driveDistance(10, true);
+//		LightLocalizer.doLocalization(1, 1);
+		Navigation.travelToCorrection(2, 6);
+		LightLocalizer.doLocalization(2, 6);
+		Navigation.pointTo(180);
 		Navigation.driveZipline();
 		//		UltrasonicLocalizer.doLocalization();
 //		Navigation.driveDistance(10, true);

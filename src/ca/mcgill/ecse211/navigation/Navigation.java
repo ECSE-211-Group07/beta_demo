@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.navigation;
 
 
+import ca.mcgill.ecse211.localization.LightLocalizer;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.resources.Resources;
 import ca.mcgill.ecse211.sensor.ColorController;
@@ -21,6 +22,7 @@ public class Navigation {
 	private static EV3LargeRegulatedMotor zipMotor = Resources.getZipMotor();
 	private static final double RADIUS = Resources.getRadius();
 	private static final double TRACK = Resources.getTrack();
+	private static final double SENSOR_DISTANCE = 13.0;
 
 	public static final int FORWARD_SPEED = 200, ROTATE_SPEED = 125, MOTOR_ACCELERATION = 50;
 
@@ -56,7 +58,7 @@ public class Navigation {
 		
 		
 		// calculate the minimum angle
-		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
+		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees() % 360;
 		
 		// Adjust the angle to make sure it takes the min angle
 		if (minAngle < -180) {
@@ -84,15 +86,16 @@ public class Navigation {
 
 	
 	public static void travelToCorrection(double x, double y) {
-		travelToCorrect(x, odometer.getY()/30.48);
 		travelToCorrect(odometer.getX()/30.48, y);
+		LightLocalizer.doLocalization(odometer.getX()/30.48, y);
+		travelToCorrect(x, odometer.getY()/30.48);
+		LightLocalizer.doLocalization(x, y);
 	}
 	
 	public static void travelToCorrect(double x, double y) {
-		double error = Math.sqrt(Math.pow(odometer.getX() - x*30.48, 2) + Math.pow(odometer.getY() - y*30.48, 2));
+		double error = error(x, y);
 		System.out.println("Error: " + error);
-		System.out.println("X: " + x);
-		System.out.println("Y: " + y);
+		
 		if (error < 2) {
 			return;
 		}
@@ -112,21 +115,27 @@ public class Navigation {
 			}
 		}
 		
-		System.out.println("Theta before: " + odometer.getThetaDegrees());
-		odometer.setTheta(getHeading());
-		System.out.println("Theta after: " + odometer.getThetaDegrees());
+		System.out.println("Theta before: " + odometer.getTheta());
+//		System.out.println("X before: " + odometer.getX());
+//		System.out.println("Y before: " + odometer.getY());
+		correctPosition();
+		System.out.println("Theta after: " + odometer.getTheta());
+//		System.out.println("X after: " + odometer.getX());
+//		System.out.println("Y after: " + odometer.getY());
 		travelToCorrect(x, y);
 	}
 	
 	public static void adjustRightMotor() {
 		double startTime = System.currentTimeMillis();
+		double deltaTime;
 		startSynchronization();
 		leftMotor.stop();
 		rightMotor.stop();
 		endSynchronization();
 		rightMotor.forward();
 		while (!ColorController.rightLineDetected()) {
-			if (System.currentTimeMillis() - startTime > 2000) {
+			deltaTime = System.currentTimeMillis() - startTime;
+			if (deltaTime > 2000) {
 				rightMotor.backward();
 			}
 			rightMotor.setSpeed(100);
@@ -137,19 +146,73 @@ public class Navigation {
 	
 	public static void adjustLeftMotor() {
 		double startTime = System.currentTimeMillis();
+		double deltaTime;
 		startSynchronization();
 		leftMotor.stop();
 		rightMotor.stop();
 		endSynchronization();
 		leftMotor.forward();
 		while (!ColorController.leftLineDetected()) {
-			if (System.currentTimeMillis() - startTime > 2000) {
+			deltaTime = System.currentTimeMillis() - startTime;
+			if (deltaTime > 2000) {
 				leftMotor.backward();
 			}
 			leftMotor.setSpeed(100);
 		}
 		rightMotor.stop();
 		leftMotor.stop();
+	}
+	
+	public static double error(double x, double y) {
+		return Math.sqrt(Math.pow(odometer.getX() - x*30.48, 2) + Math.pow(odometer.getY() - y*30.48, 2));
+	}
+	
+	public static void correctPosition() {
+		double currentHeading = getHeading();
+		boolean travellingX = false;
+		int multiplier = 0;
+		if (currentHeading == 0.0) {
+			travellingX = false;
+			multiplier = 1;
+		} else if (currentHeading == 180.0) {
+			travellingX = false;
+			multiplier = -1;
+		} else if (currentHeading == 90.0) {
+			travellingX = true;
+			multiplier = 1;
+		} else if (currentHeading == 270.0) {
+			travellingX = true;
+			multiplier = -1;
+		} else {
+			return;
+		}
+		
+		double currentPosition;
+		if (travellingX) {
+			currentPosition = odometer.getX();
+		} else {
+			currentPosition = odometer.getY();
+		}
+		currentPosition = currentPosition/30.48;
+		
+		double error = Double.MAX_VALUE;
+		double bestIndex = 0;
+		for(double i = 1; i < 13; i++) {
+			if (Math.abs(currentPosition - i) < error) {
+				bestIndex = i;
+				error = Math.abs(currentPosition - i);
+			}
+		}
+		
+		if (travellingX) {
+			System.out.println("Corrected X to be: " + 30.48*bestIndex + multiplier*SENSOR_DISTANCE);
+		} else {
+			System.out.println("Corrected Y to be: " + 30.48*bestIndex + multiplier*SENSOR_DISTANCE);
+		}
+		
+		
+		odometer.setPosition(new double[] {bestIndex*30.48 + SENSOR_DISTANCE*multiplier, bestIndex*30.48 + SENSOR_DISTANCE*multiplier, currentHeading}, 
+							new boolean[] {travellingX, !travellingX, true}); 
 	}
 	
 	public static double getHeading() {
@@ -176,6 +239,12 @@ public class Navigation {
 		
 		double deltaX = x - odometer.getX();
 		double deltaY = y - odometer.getY();
+		System.out.println("X: " + x);
+		System.out.println("Y: " + y);
+		System.out.println("Odometer X: " + odometer.getX());
+		System.out.println("Odometer Y: " + odometer.getY());
+		System.out.println("DeltaX: " + deltaX);
+		System.out.println("DeltaY: " + deltaY);
 		
 		// Calculate the degree you need to change to
 		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
@@ -194,7 +263,7 @@ public class Navigation {
 		double distance  = Math.hypot(deltaX, deltaY);
 		
 		// move to the next point
-		leftMotor.setSpeed(FORWARD_SPEED);
+		leftMotor.setSpeed(FORWARD_SPEED+5);
 		rightMotor.setSpeed(FORWARD_SPEED);
 		leftMotor.rotate(convertDistance(RADIUS,distance), true);
 		rightMotor.rotate(convertDistance(RADIUS, distance), true);

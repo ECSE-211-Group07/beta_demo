@@ -23,7 +23,7 @@ public class Resources {
 	private static EV3LargeRegulatedMotor zipMotor;
 	private static EV3UltrasonicSensor ultrasonicSensor;
 	private static UltrasonicController usCont;
-	private static EV3ColorSensor lightSensorLeft, lightSensorRight;
+	private static EV3ColorSensor lightSensorLeft, lightSensorRight, lightSensorMiddle;
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
@@ -43,12 +43,13 @@ public class Resources {
 	 */
 	public Resources(String leftMotorPort, String rightMotorPort, 
 			String zipMotorPort, String lightSensorPortLeft, String lightSensorPortRight, 
-			String ultrasonicSensorPort) {
+			String lightSensorPortMiddle, String ultrasonicSensorPort) {
 		leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(leftMotorPort));
 		rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(rightMotorPort));
 		zipMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(zipMotorPort));
 		lightSensorLeft = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortLeft));
 		lightSensorRight = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortRight));
+		lightSensorMiddle = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortMiddle));
 		ultrasonicSensor = new EV3UltrasonicSensor(LocalEV3.get().getPort(ultrasonicSensorPort));
 		usCont = new UltrasonicController();
 		colorCont = new ColorController();
@@ -65,6 +66,15 @@ public class Resources {
 	 */
 	public static EV3ColorSensor getColorSensorLeft() {
 		return lightSensorLeft;
+	}
+	
+	/**
+	 * Used to return the light sensor on left of robot
+	 * 
+	 * @return EV3ColorSensor
+	 */
+	public static EV3ColorSensor getColorSensorMiddle() {
+		return lightSensorMiddle;
 	}
 	
 	/**

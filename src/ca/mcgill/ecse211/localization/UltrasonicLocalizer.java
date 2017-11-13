@@ -108,7 +108,7 @@ public class UltrasonicLocalizer {
 		odometer.setPosition(new double [] {0, 0, 0}, 
 				new boolean [] {true, true, true});
 		
-		// Navigation.driveDistance(25, false);
+		Navigation.driveDistance(25, false);
 		
 		odometer.setPosition(new double [] {0, 0, 0}, 
 				new boolean [] {true, true, true});

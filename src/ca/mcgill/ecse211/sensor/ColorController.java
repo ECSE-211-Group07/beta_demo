@@ -7,11 +7,13 @@ import lejos.hardware.Sound;
  *
  */
 public class ColorController {
-	private static float colorValLeft, colorValRight;
+	private static float colorValLeft, colorValRight, colorValMiddle;
 	private static float[] prevValLeft = new float[2];
 	private static float[] prevValRight = new float[2];
+	private static float[] prevValMiddle = new float[2];
 	private static boolean leftLineDetected = false;
 	private static boolean rightLineDetected = false;
+	private static boolean middleLineDetected = false;
 	private static boolean bothLinesDetected = false;
 	
 	
@@ -21,7 +23,7 @@ public class ColorController {
 	 * @param valLeft
 	 * @param valRight
 	 */
-	public void processColorData(float valLeft, float valRight) {
+	public void processColorData(float valLeft, float valRight, float valMiddle) {
 		prevValLeft[0] = prevValLeft[1];
 		prevValLeft[1] =  valLeft;
 	
@@ -31,6 +33,11 @@ public class ColorController {
 		prevValRight[1] =  valRight;
 	
 		ColorController.colorValRight = prevValRight[1] - prevValRight[0];
+		
+		prevValMiddle[0] = prevValMiddle[1];
+		prevValMiddle[1] =  valMiddle;
+	
+		ColorController.colorValMiddle = prevValMiddle[1] - prevValMiddle[0];
 		
 		changeState();
 	};
@@ -65,6 +72,12 @@ public class ColorController {
 			rightLineDetected = false;
 		}
 		
+		if(colorValMiddle > 0.10) {
+			middleLineDetected = true;
+		} else {
+			middleLineDetected = false;
+		}
+		
 		if(leftLineDetected && rightLineDetected) {
 			bothLinesDetected = true;
 		}
@@ -82,6 +95,10 @@ public class ColorController {
 	 */
 	public static boolean rightLineDetected() {
 		return rightLineDetected;
+	}
+	
+	public static boolean middleLineDetected() {
+		return middleLineDetected;
 	}
 	
 	

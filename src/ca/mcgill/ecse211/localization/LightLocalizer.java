@@ -59,23 +59,22 @@ public class LightLocalizer {
 	 */
 	public static void rotateLightSensor() {
 		Navigation.turnTo(360, true);
-		int lineIndexLeft=1;
-		int lineIndexRight=1;
+		int lineIndex = 1;
 		while(Navigation.isNavigating()) {
-			if(ColorController.leftLineDetected() && lineIndexLeft < 5) {
-				lightDataLeft[lineIndexLeft]=odometer.getThetaDegrees();
-				lineIndexLeft++;
+			if(ColorController.middleLineDetected() && lineIndex < 5) {
+				lightData[lineIndex]=odometer.getThetaDegrees();
+				lineIndex++;
 				Sound.beep();
 			}
 			
-			if(ColorController.rightLineDetected() && lineIndexRight < 5) {
-				lightDataRight[lineIndexRight]=odometer.getThetaDegrees();
-				lineIndexRight++;
-				Sound.beepSequence();
-			}
+//			if(ColorController.rightLineDetected() && lineIndexRight < 5) {
+//				lightDataRight[lineIndexRight]=odometer.getThetaDegrees();
+//				lineIndexRight++;
+//				Sound.beepSequence();
+//			}
 		}
 		
-		averageValues();
+		//averageValues();
 	}
 	
 	private static void averageValues() {
