@@ -86,16 +86,38 @@ public class Navigation {
 
 	
 	public static void travelToCorrection(double x, double y) {
-		travelToCorrect(odometer.getX()/30.48, y);
-		LightLocalizer.doLocalization(odometer.getX()/30.48, y);
-		travelToCorrect(x, odometer.getY()/30.48);
-		LightLocalizer.doLocalization(x, y);
+		double prevX = odometer.getX();
+		travelToCorrect(prevX/30.48, y);
+		LightLocalizer.doLocalization(nearestPoint(prevX), y);
+	}
+	
+	public static void positionCorrection(double x, double y) {
+		double currentHeading=odometer.getTheta();
+		double newX;
+		double newY;
+		if (currentHeading < 100 && currentHeading > 80) {
+			newX=nearestPoint(odometer.getX())*30.48+12;
+			newY=odometer.getY();
+		} else if (odometer.getTheta() < 10 || (odometer.getTheta() > 350 && odometer.getTheta() < 360)) {
+		 newY=nearestPoint(odometer.getY())*30.48+12;
+		 newX=odometer.getX();
+		} else if (currentHeading < 190 && currentHeading >  170) {
+			newY=nearestPoint(odometer.getY())*30.48-12;
+			newX=odometer.getX();
+
+		} else if (currentHeading < 280 && currentHeading > 260) {
+			newX=nearestPoint(odometer.getX())*30.48-12;
+			newY=odometer.getY();
+		}
+		
+	}
+	
+	public static double nearestPoint(double value) {
+		return Math.round((value)/30.48);
 	}
 	
 	public static void travelToCorrect(double x, double y) {
 		double error = error(x, y);
-		System.out.println("Error: " + error);
-		
 		if (error < 2) {
 			return;
 		}
@@ -115,14 +137,13 @@ public class Navigation {
 			}
 		}
 		
-		System.out.println("Theta before: " + odometer.getTheta());
 //		System.out.println("X before: " + odometer.getX());
 //		System.out.println("Y before: " + odometer.getY());
-		correctPosition();
-		System.out.println("Theta after: " + odometer.getTheta());
+//		odometer.setTheta(getHeading());
 //		System.out.println("X after: " + odometer.getX());
 //		System.out.println("Y after: " + odometer.getY());
-		travelToCorrect(x, y);
+		travelToCorrect(odometer.getX()/30.48, y);
+		
 	}
 	
 	public static void adjustRightMotor() {
@@ -232,6 +253,8 @@ public class Navigation {
 	}
 	
 	
+	
+	
 	public static void travelToFree(double x, double y) {
 		x= x*30.48;
 		y= y*30.48;
@@ -239,16 +262,16 @@ public class Navigation {
 		
 		double deltaX = x - odometer.getX();
 		double deltaY = y - odometer.getY();
-		System.out.println("X: " + x);
-		System.out.println("Y: " + y);
-		System.out.println("Odometer X: " + odometer.getX());
-		System.out.println("Odometer Y: " + odometer.getY());
-		System.out.println("DeltaX: " + deltaX);
-		System.out.println("DeltaY: " + deltaY);
+//		System.out.println("X: " + x);
+//		System.out.println("Y: " + y);
+//		System.out.println("Odometer X: " + odometer.getX());
+//		System.out.println("Odometer Y: " + odometer.getY());
+//		System.out.println("DeltaX: " + deltaX);
+//		System.out.println("DeltaY: " + deltaY);
 		
 		// Calculate the degree you need to change to
 		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
-		System.out.println("Min angle: " + minAngle);
+//		System.out.println("Min angle: " + minAngle);
 	
 		if (minAngle < -180) {
 			minAngle = 360 + minAngle;

@@ -51,33 +51,33 @@ public class Tester {
 		poller.start();
 
 
-		try {
-			Map data = conn.getData();
-
-			zipX = ((Long) data.get("ZC_R_x")).intValue();
-			zipY = ((Long) data.get("ZC_R_y")).intValue();
-			startCorner = ((Long) data.get("RedCorner")).intValue();
-			t.drawInt(startCorner, 1, 10);
-		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
-		}
+//		try {
+//			Map data = conn.getData();
+//
+//			zipX = ((Long) data.get("ZC_R_x")).intValue();
+//			zipY = ((Long) data.get("ZC_R_y")).intValue();
+//			startCorner = ((Long) data.get("RedCorner")).intValue();
+//			t.drawInt(startCorner, 1, 10);
+//		} catch (Exception e) {
+//			System.err.println("Error: " + e.getMessage());
+//		}
 		
-		//initialize robots position based on the inputted starting corner
-		if (startCorner == 0) {
-			LightLocalizer.doLocalization(1, 1);
-			odometer.setTheta(0);
-		} else if (startCorner == 1) {
-			LightLocalizer.doLocalization(7, 1);
-			odometer.setTheta(0);
-		} else if (startCorner == 2) {
-			LightLocalizer.doLocalization(7, 7);
-			odometer.setTheta(180);
-			Navigation.travelTo(7, 5);
-		} else if (startCorner == 3) {
-			LightLocalizer.doLocalization(1, 7);
-			Navigation.pointTo(180);
-			odometer.setTheta(180);
-		}
+//		//initialize robots position based on the inputted starting corner
+//		if (startCorner == 0) {
+//			LightLocalizer.doLocalization(1, 1);
+//			odometer.setTheta(0);
+//		} else if (startCorner == 1) {
+//			LightLocalizer.doLocalization(7, 1);
+//			odometer.setTheta(0);
+//		} else if (startCorner == 2) {
+//			LightLocalizer.doLocalization(7, 7);
+//			odometer.setTheta(180);
+//			Navigation.travelTo(7, 5);
+//		} else if (startCorner == 3) {
+//			LightLocalizer.doLocalization(1, 7);
+//			Navigation.pointTo(180);
+//			odometer.setTheta(180);
+//		}
 		
 		/*
 		 * If you are looking to stop the reverse, please look into doLocalization and 
@@ -96,7 +96,7 @@ public class Tester {
 //		Navigation.driveDistance(10, true);
 //		LightLocalizer.doLocalization(1, 1);
 ////		
-		// Navigation.travelToCorrection(1, 3);
+		Navigation.travelToCorrection(0, 7);
 ////		// Navigation.driveDistance(16, false);
 ////		Navigation.travelTo(1, 1);
 //		Sound.beep();
