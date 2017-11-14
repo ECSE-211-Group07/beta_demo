@@ -4,6 +4,7 @@ import ca.mcgill.ecse211.navigation.Navigation;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.resources.Resources;
 import ca.mcgill.ecse211.sensor.ColorController;
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
@@ -33,6 +34,14 @@ public class LightLocalizer {
 	 * 30.48, 30.48 it will determine that it needs to localize on 1, 1
 	 * Takes away work from us
 	 */
+	
+	public static void doLocalization(double x, double y) {
+		Navigation.pointTo(45);
+		rotateLightSensor();
+		correctPosition(x, y, 4);
+		Navigation.travelTo(x, y);
+	}
+	
 	public static void doLocalization(double x, double y, int corner) {
 
 		// goToApproxOrigin();
@@ -95,32 +104,38 @@ public class LightLocalizer {
 		//compute difference in angles
 		double deltaThetaY, deltaThetaX, Xnew = 0, Ynew = 0;
 		if (corner == 0 || corner == 2) {
-			deltaThetaY= lightData[2]-lightData[4];
-			deltaThetaX= lightData[1]-lightData[3];
-			if (corner == 2) {
-				Xnew = (x * 30.48)+SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
-				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
-			} else {
+			if (corner == 0) {
+				deltaThetaY= Math.abs(lightData[4]-lightData[2]);
+				deltaThetaX= Math.abs(lightData[3]-lightData[1]);
 				Xnew = (x * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
 				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
+			} else {
+				deltaThetaY= Math.abs(lightData[4]-lightData[2]);
+				deltaThetaX= Math.abs(lightData[3]-lightData[1]);
+				Xnew = (x * 30.48)+SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
+				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
 			}
+			
 		} else if (corner == 1 || corner == 3) {
-			deltaThetaY= lightData[1]-lightData[3];
-			deltaThetaX= lightData[2]-lightData[4];
 			if (corner == 1) {
+				deltaThetaY= Math.abs(lightData[3]-lightData[1]);
+				deltaThetaX= Math.abs(lightData[4]-lightData[2]);
 				Xnew = (x * 30.48)+SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
 				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
 			} else {
+				deltaThetaY= Math.abs(lightData[3]-lightData[1]);
+				deltaThetaX= Math.abs(lightData[4]-lightData[2]);
 				Xnew = (x * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
 				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
 			}
+			
 		} else {
 			if (Navigation.getHeading() == 0 || Navigation.getHeading() == 180) {
-				deltaThetaY= lightData[2]-lightData[4];
-				deltaThetaX= lightData[1]-lightData[3];
+				deltaThetaY= Math.abs(lightData[4]-lightData[2]);
+				deltaThetaX= Math.abs(lightData[3]-lightData[1]);
 			} else {
-				deltaThetaY= lightData[1]-lightData[3];
-				deltaThetaX= lightData[2]-lightData[4];
+				deltaThetaY= Math.abs(lightData[3]-lightData[1]);
+				deltaThetaX= Math.abs(lightData[4]-lightData[2]);
 			}
 		}
 		

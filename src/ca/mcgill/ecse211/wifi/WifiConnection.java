@@ -67,7 +67,7 @@ public class WifiConnection {
 	public Map getData() throws IOException, UnknownHostException, ParseException {
 
 		if (this.debugPrint) {
-			System.out.println("Connecting...");
+			//System.out.println("Connecting...");
 		}
 
 		// Connect to server, set timeout
@@ -83,7 +83,7 @@ public class WifiConnection {
 		PrintWriter writer = new PrintWriter(conn.getOutputStream(), true);
 
 		if (this.debugPrint) {
-			System.out.println("Connected. Sending request.");
+			//System.out.println("Connected. Sending request.");
 		}
 
 		// Create data to send to server
@@ -95,7 +95,7 @@ public class WifiConnection {
 		sendData(obj, writer);
 
 		if (this.debugPrint) {
-			System.out.println("Request sent; waiting for response");
+			//System.out.println("Request sent; waiting for response");
 		}
 
 		// Wait for and read response from server
@@ -112,7 +112,7 @@ public class WifiConnection {
 			conn.close();
 			throw new IOException("Bad server status: " + rJSONObject.get("Status"));
 		} else if (this.debugPrint) {
-			System.out.println("Response received OK.");
+			//System.out.println("Response received OK.");
 		}
 
 		// Remove type and status as they are not needed by the user
@@ -175,10 +175,10 @@ public class WifiConnection {
 						this.connection.close();
 						return;
 					} catch (IOException e) {
-						System.err.println("Error when closing connection: " + e.getMessage());
+						//System.err.println("Error when closing connection: " + e.getMessage());
 					}
-					if (this.debugPrint)
-						System.out.println("Closing connection...");
+					//if (this.debugPrint)
+						//System.out.println("Closing connection...");
 				}
 			}
 		}
