@@ -86,21 +86,9 @@ public class Navigation {
 
 	
 	public static void travelToCorrection(double x, double y) {
-<<<<<<< HEAD
-		travelTo(odometer.getX()/30.48, (int) y/2);
-		LightLocalizer.doLocalization(odometer.getX()/30.48, (int) y/2, 4);
-		travelTo(odometer.getX()/30.48, y);
-		LightLocalizer.doLocalization(odometer.getX()/30.48, y, 4);
-		travelTo((int) x/2, odometer.getY()/30.48);
-		LightLocalizer.doLocalization((int) x/2, odometer.getY()/30.48, 4);
-		travelTo(x, odometer.getY()/30.48);
-		LightLocalizer.doLocalization(x, y, 4);
-	}
-	
-=======
 		double prevX = odometer.getX();
 		travelToCorrect(prevX/30.48, y);
-		LightLocalizer.doLocalization(nearestPoint(prevX), y);
+		LightLocalizer.doLocalization(nearestPoint(prevX), y, 4);
 	}
 	
 	public static void positionCorrection(double x, double y) {
@@ -176,8 +164,25 @@ public class Navigation {
 		leftMotor.stop();
 		rightMotor.stop();
 	}
->>>>>>> 1653ea54a37d127e567d883492d9e43fb5739bd9
 	
+	public static void adjustLeftMotor() {
+		double startTime = System.currentTimeMillis();
+		double deltaTime;
+		startSynchronization();
+		leftMotor.stop();
+		rightMotor.stop();
+		endSynchronization();
+		leftMotor.forward();
+		while (!ColorController.leftLineDetected()) {
+			deltaTime = System.currentTimeMillis() - startTime;
+			if (deltaTime > 2000) {
+				leftMotor.backward();
+			}
+			leftMotor.setSpeed(100);
+		}
+		rightMotor.stop();
+		leftMotor.stop();
+	}
 	
 	public static double error(double x, double y) {
 		return Math.sqrt(Math.pow(odometer.getX() - x*30.48, 2) + Math.pow(odometer.getY() - y*30.48, 2));
