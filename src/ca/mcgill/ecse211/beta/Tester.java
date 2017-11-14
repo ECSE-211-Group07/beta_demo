@@ -33,9 +33,13 @@ public class Tester {
 		Poller poller = new Poller(Resources.getUltrasonicController(), Resources.getColorController());
 		ColorController color = new ColorController();
 
-		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+		//WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
-		int buttonChoice, zipX = 0, zipY = 0, startCorner = 0;
+		int buttonChoice, zipX = 0, zipY = 0, startCorner = 1;
+		
+		odometer.start();
+		odometryDisplay.start();
+		poller.start();
 		
 		do {
 			t.clear();
@@ -43,41 +47,44 @@ public class Tester {
 			t.drawString("  TO START           ", 0, 2);
 			buttonChoice = Button.waitForAnyPress();
 		} while (buttonChoice != Button.ID_ENTER);
-
-		t.clear();
-		
-		odometer.start();
-		odometryDisplay.start();
-		poller.start();
-
-
+	
 //		try {
 //			Map data = conn.getData();
 //
-//			zipX = ((Long) data.get("ZC_R_x")).intValue();
-//			zipY = ((Long) data.get("ZC_R_y")).intValue();
+//			//zipX = ((Long) data.get("ZC_R_x")).intValue();
+//			//zipY = ((Long) data.get("ZC_R_y")).intValue();
 //			startCorner = ((Long) data.get("RedCorner")).intValue();
-//			t.drawInt(startCorner, 1, 10);
 //		} catch (Exception e) {
 //			System.err.println("Error: " + e.getMessage());
 //		}
+		t.clear();
 		
-//		//initialize robots position based on the inputted starting corner
-//		if (startCorner == 0) {
-//			LightLocalizer.doLocalization(1, 1);
-//			odometer.setTheta(0);
-//		} else if (startCorner == 1) {
-//			LightLocalizer.doLocalization(7, 1);
-//			odometer.setTheta(0);
-//		} else if (startCorner == 2) {
-//			LightLocalizer.doLocalization(7, 7);
-//			odometer.setTheta(180);
-//			Navigation.travelTo(7, 5);
-//		} else if (startCorner == 3) {
-//			LightLocalizer.doLocalization(1, 7);
-//			Navigation.pointTo(180);
-//			odometer.setTheta(180);
-//		}
+		//initialize robots position based on the inputed starting corner
+		if (startCorner == 0) {
+			//UltrasonicLocalizer.doLocalization();
+			odometer.setTheta(0);
+			LightLocalizer.doLocalization(1, 1, startCorner);
+			Navigation.travelTo(2, 1);
+		} else if (startCorner == 1) {
+			//UltrasonicLocalizer.doLocalization();
+			odometer.setTheta(0);
+			LightLocalizer.doLocalization(7, 1, startCorner);
+			Navigation.travelTo(6, 1);
+		} else if (startCorner == 2) {
+			//UltrasonicLocalizer.doLocalization();
+			odometer.setTheta(180);
+			LightLocalizer.doLocalization(7, 7, startCorner);
+			Navigation.travelTo(6, 7);
+			//Navigation.travelTo(7, 5);
+		} else if (startCorner == 3) {
+			odometer.setTheta(180);
+			LightLocalizer.doLocalization(1, 7, startCorner);
+			Navigation.travelTo(2, 7);
+		}
+
+		odometer.start();
+		odometryDisplay.start();
+		poller.start();
 		
 		/*
 		 * If you are looking to stop the reverse, please look into doLocalization and 
