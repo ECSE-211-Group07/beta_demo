@@ -86,6 +86,7 @@ public class Navigation {
 
 	
 	public static void travelToCorrection(double x, double y) {
+<<<<<<< HEAD
 		travelTo(odometer.getX()/30.48, (int) y/2);
 		LightLocalizer.doLocalization(odometer.getX()/30.48, (int) y/2, 4);
 		travelTo(odometer.getX()/30.48, y);
@@ -96,6 +97,86 @@ public class Navigation {
 		LightLocalizer.doLocalization(x, y, 4);
 	}
 	
+=======
+		double prevX = odometer.getX();
+		travelToCorrect(prevX/30.48, y);
+		LightLocalizer.doLocalization(nearestPoint(prevX), y);
+	}
+	
+	public static void positionCorrection(double x, double y) {
+		double currentHeading=odometer.getTheta();
+		double newX;
+		double newY;
+		if (currentHeading < 100 && currentHeading > 80) {
+			newX=nearestPoint(odometer.getX())*30.48+12;
+			newY=odometer.getY();
+		} else if (odometer.getTheta() < 10 || (odometer.getTheta() > 350 && odometer.getTheta() < 360)) {
+		 newY=nearestPoint(odometer.getY())*30.48+12;
+		 newX=odometer.getX();
+		} else if (currentHeading < 190 && currentHeading >  170) {
+			newY=nearestPoint(odometer.getY())*30.48-12;
+			newX=odometer.getX();
+
+		} else if (currentHeading < 280 && currentHeading > 260) {
+			newX=nearestPoint(odometer.getX())*30.48-12;
+			newY=odometer.getY();
+		}
+		
+	}
+	
+	public static double nearestPoint(double value) {
+		return Math.round((value)/30.48);
+	}
+	
+	public static void travelToCorrect(double x, double y) {
+		double error = error(x, y);
+		if (error < 2) {
+			return;
+		}
+		travelToFree(x, y);
+		
+		while (isNavigating()) {
+			if (ColorController.leftLineDetected() && ColorController.rightLineDetected()) {
+				Sound.beep();
+			}
+			else if (ColorController.leftLineDetected() && !ColorController.rightLineDetected()) {
+				adjustRightMotor();
+				break;
+			} 
+			else if (ColorController.rightLineDetected() && !ColorController.leftLineDetected()) {
+				adjustLeftMotor();
+				break;
+			}
+		}
+		
+//		System.out.println("X before: " + odometer.getX());
+//		System.out.println("Y before: " + odometer.getY());
+//		odometer.setTheta(getHeading());
+//		System.out.println("X after: " + odometer.getX());
+//		System.out.println("Y after: " + odometer.getY());
+		travelToCorrect(odometer.getX()/30.48, y);
+		
+	}
+	
+	public static void adjustRightMotor() {
+		double startTime = System.currentTimeMillis();
+		double deltaTime;
+		startSynchronization();
+		leftMotor.stop();
+		rightMotor.stop();
+		endSynchronization();
+		rightMotor.forward();
+		while (!ColorController.rightLineDetected()) {
+			deltaTime = System.currentTimeMillis() - startTime;
+			if (deltaTime > 2000) {
+				rightMotor.backward();
+			}
+			rightMotor.setSpeed(100);
+		}
+		leftMotor.stop();
+		rightMotor.stop();
+	}
+>>>>>>> 1653ea54a37d127e567d883492d9e43fb5739bd9
 	
 	
 	public static double error(double x, double y) {
@@ -167,6 +248,8 @@ public class Navigation {
 	}
 	
 	
+	
+	
 	public static void travelToFree(double x, double y) {
 		x= x*30.48;
 		y= y*30.48;
@@ -174,16 +257,16 @@ public class Navigation {
 		
 		double deltaX = x - odometer.getX();
 		double deltaY = y - odometer.getY();
-		System.out.println("X: " + x);
-		System.out.println("Y: " + y);
-		System.out.println("Odometer X: " + odometer.getX());
-		System.out.println("Odometer Y: " + odometer.getY());
-		System.out.println("DeltaX: " + deltaX);
-		System.out.println("DeltaY: " + deltaY);
+//		System.out.println("X: " + x);
+//		System.out.println("Y: " + y);
+//		System.out.println("Odometer X: " + odometer.getX());
+//		System.out.println("Odometer Y: " + odometer.getY());
+//		System.out.println("DeltaX: " + deltaX);
+//		System.out.println("DeltaY: " + deltaY);
 		
 		// Calculate the degree you need to change to
 		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
-		System.out.println("Min angle: " + minAngle);
+//		System.out.println("Min angle: " + minAngle);
 	
 		if (minAngle < -180) {
 			minAngle = 360 + minAngle;

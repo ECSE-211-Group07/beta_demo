@@ -47,7 +47,7 @@ public class Tester {
 			t.drawString("  TO START           ", 0, 2);
 			buttonChoice = Button.waitForAnyPress();
 		} while (buttonChoice != Button.ID_ENTER);
-		
+	
 //		try {
 //			Map data = conn.getData();
 //
@@ -81,6 +81,10 @@ public class Tester {
 			LightLocalizer.doLocalization(1, 7, startCorner);
 			Navigation.travelTo(2, 7);
 		}
+
+		odometer.start();
+		odometryDisplay.start();
+		poller.start();
 		
 		/*
 		 * If you are looking to stop the reverse, please look into doLocalization and 
@@ -99,7 +103,7 @@ public class Tester {
 //		Navigation.driveDistance(10, true);
 //		LightLocalizer.doLocalization(1, 1);
 ////		
-		// Navigation.travelToCorrection(1, 3);
+		Navigation.travelToCorrection(0, 7);
 ////		// Navigation.driveDistance(16, false);
 ////		Navigation.travelTo(1, 1);
 //		Sound.beep();
