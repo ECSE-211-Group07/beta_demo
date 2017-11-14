@@ -84,8 +84,7 @@ public class Tester {
 		 * remove Navigation.driveDistance call
 		 */
 //
-//		Navigation.turnTo(-360*10, true);
-//		
+//		Navigation.turnTo(-360*10, true);//		
 		
 //		Navigation.driveDistance(5, true);
 //		UltrasonicLocalizer.doLocalization();
@@ -96,7 +95,13 @@ public class Tester {
 //		Navigation.driveDistance(10, true);
 //		LightLocalizer.doLocalization(1, 1);
 ////		
-		Navigation.travelToCorrection(0, 7);
+		//Navigation.travelToCorrectionY(0, 6);
+		
+		odometer.setX(30.48);
+		odometer.setY(30.48);
+		Navigation.travelToCorrection(3, 7);
+		Navigation.pointTo(225);
+		Navigation.driveZipline();
 ////		// Navigation.driveDistance(16, false);
 ////		Navigation.travelTo(1, 1);
 //		Sound.beep();

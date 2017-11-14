@@ -26,7 +26,7 @@ public class Navigation {
 
 	public static final int FORWARD_SPEED = 200, ROTATE_SPEED = 125, MOTOR_ACCELERATION = 50;
 
-	
+	private static boolean travellingX = true;
 
 	/**
 	 * Primary navigation point of the program, performs all navigation based functions
@@ -80,38 +80,32 @@ public class Navigation {
 		rightMotor.rotate(convertDistance(RADIUS, distance), false);
 		
 
-		leftMotor.stop(true);
-		rightMotor.stop(true);
 	}	
 
-	
 	public static void travelToCorrection(double x, double y) {
+		setTravelling(true);
+		travelToCorrectionX(x, odometer.getY()/30.48);
+		setTravelling(false);
+		travelToCorrectionY(odometer.getX(), y);
+	}
+	
+	public static void travelToCorrectionY(double x, double y) {
 		double prevX = odometer.getX();
 		travelToCorrect(prevX/30.48, y);
 		LightLocalizer.doLocalization(nearestPoint(prevX), y);
 	}
 	
-	public static void positionCorrection(double x, double y) {
-		double currentHeading=odometer.getTheta();
-		double newX;
-		double newY;
-		if (currentHeading < 100 && currentHeading > 80) {
-			newX=nearestPoint(odometer.getX())*30.48+12;
-			newY=odometer.getY();
-		} else if (odometer.getTheta() < 10 || (odometer.getTheta() > 350 && odometer.getTheta() < 360)) {
-		 newY=nearestPoint(odometer.getY())*30.48+12;
-		 newX=odometer.getX();
-		} else if (currentHeading < 190 && currentHeading >  170) {
-			newY=nearestPoint(odometer.getY())*30.48-12;
-			newX=odometer.getX();
-
-		} else if (currentHeading < 280 && currentHeading > 260) {
-			newX=nearestPoint(odometer.getX())*30.48-12;
-			newY=odometer.getY();
-		}
-		
+	public static void travelToCorrectionX(double x, double y) {
+		double prevY = odometer.getY();
+		travelToCorrect(x, prevY/30.48);
+		LightLocalizer.doLocalization(x, nearestPoint(prevY));
 	}
 	
+	
+	public static void setTravelling(boolean x) {
+		travellingX = x;
+	}
+ 	
 	public static double nearestPoint(double value) {
 		return Math.round((value)/30.48);
 	}
@@ -137,12 +131,14 @@ public class Navigation {
 			}
 		}
 		
-//		System.out.println("X before: " + odometer.getX());
-//		System.out.println("Y before: " + odometer.getY());
-//		odometer.setTheta(getHeading());
-//		System.out.println("X after: " + odometer.getX());
-//		System.out.println("Y after: " + odometer.getY());
-		travelToCorrect(odometer.getX()/30.48, y);
+		odometer.setTheta(getHeading());
+
+		if (travellingX) {
+			travelToCorrect(x, odometer.getY()/30.48);
+		} else {
+			travelToCorrect(odometer.getX()/30.48, y);
+		}
+		
 		
 	}
 	
@@ -161,8 +157,10 @@ public class Navigation {
 			}
 			rightMotor.setSpeed(100);
 		}
+		startSynchronization();
 		leftMotor.stop();
 		rightMotor.stop();
+		endSynchronization();
 	}
 	
 	public static void adjustLeftMotor() {
@@ -180,79 +178,35 @@ public class Navigation {
 			}
 			leftMotor.setSpeed(100);
 		}
-		rightMotor.stop();
+		startSynchronization();
 		leftMotor.stop();
+		rightMotor.stop();
+		endSynchronization();
 	}
 	
 	public static double error(double x, double y) {
 		return Math.sqrt(Math.pow(odometer.getX() - x*30.48, 2) + Math.pow(odometer.getY() - y*30.48, 2));
 	}
 	
-	public static void correctPosition() {
-		double currentHeading = getHeading();
-		boolean travellingX = false;
-		int multiplier = 0;
-		if (currentHeading == 0.0) {
-			travellingX = false;
-			multiplier = 1;
-		} else if (currentHeading == 180.0) {
-			travellingX = false;
-			multiplier = -1;
-		} else if (currentHeading == 90.0) {
-			travellingX = true;
-			multiplier = 1;
-		} else if (currentHeading == 270.0) {
-			travellingX = true;
-			multiplier = -1;
-		} else {
-			return;
-		}
-		
-		double currentPosition;
-		if (travellingX) {
-			currentPosition = odometer.getX();
-		} else {
-			currentPosition = odometer.getY();
-		}
-		currentPosition = currentPosition/30.48;
-		
-		double error = Double.MAX_VALUE;
-		double bestIndex = 0;
-		for(double i = 1; i < 13; i++) {
-			if (Math.abs(currentPosition - i) < error) {
-				bestIndex = i;
-				error = Math.abs(currentPosition - i);
-			}
-		}
-		
-		if (travellingX) {
-			System.out.println("Corrected X to be: " + 30.48*bestIndex + multiplier*SENSOR_DISTANCE);
-		} else {
-			System.out.println("Corrected Y to be: " + 30.48*bestIndex + multiplier*SENSOR_DISTANCE);
-		}
-		
-		
-		odometer.setPosition(new double[] {bestIndex*30.48 + SENSOR_DISTANCE*multiplier, bestIndex*30.48 + SENSOR_DISTANCE*multiplier, currentHeading}, 
-							new boolean[] {travellingX, !travellingX, true}); 
-	}
-	
 	public static double getHeading() {
 		double currentHeading = odometer.getThetaDegrees();
 		
 		if (currentHeading < 100 && currentHeading > 80) {
+			travellingX = true;
 			return 90.0;
-		} else if (odometer.getTheta() < 10 || (odometer.getTheta() > 350 && odometer.getTheta() < 360)) {
+		} else if (currentHeading < 10 || (currentHeading > 350 && currentHeading < 360)) {
+			travellingX = false;
 			return 0.0;
 		} else if (currentHeading < 190 && currentHeading >  170) {
+			travellingX = false;
 			return 180.0;
 		} else if (currentHeading < 280 && currentHeading > 260) {
+			travellingX = true;
 			return 270.0;
 		} else {
 			return currentHeading;
 		}
 	}
-	
-	
 	
 	
 	public static void travelToFree(double x, double y) {
@@ -262,13 +216,7 @@ public class Navigation {
 		
 		double deltaX = x - odometer.getX();
 		double deltaY = y - odometer.getY();
-//		System.out.println("X: " + x);
-//		System.out.println("Y: " + y);
-//		System.out.println("Odometer X: " + odometer.getX());
-//		System.out.println("Odometer Y: " + odometer.getY());
-//		System.out.println("DeltaX: " + deltaX);
-//		System.out.println("DeltaY: " + deltaY);
-		
+
 		// Calculate the degree you need to change to
 		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
 //		System.out.println("Min angle: " + minAngle);
@@ -286,7 +234,7 @@ public class Navigation {
 		double distance  = Math.hypot(deltaX, deltaY);
 		
 		// move to the next point
-		leftMotor.setSpeed(FORWARD_SPEED+5);
+		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 		leftMotor.rotate(convertDistance(RADIUS,distance), true);
 		rightMotor.rotate(convertDistance(RADIUS, distance), true);
@@ -307,7 +255,6 @@ public class Navigation {
 		
 		leftMotor.rotate(angle, true);
 		rightMotor.rotate(-angle, block);
-
 	}
 	
 	

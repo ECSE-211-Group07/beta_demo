@@ -50,18 +50,18 @@ public class UltrasonicLocalizer {
 			rightMotor.backward();
 		}
 
-			//keep rotating until the robot sees the wall,then get the angel
-			leftMotor.forward();
-			rightMotor.backward();
-			boolean isTurning=true;
-	
-			while(isTurning) {
-				if(UltrasonicController.readUSDistance()<D) {
-					leftMotor.stop(true);
-					rightMotor.stop(false);
-					isTurning=false;
-				}
+		//keep rotating until the robot sees the wall,then get the angel
+		leftMotor.forward();
+		rightMotor.backward();
+		boolean isTurning=true;
+
+		while(isTurning) {
+			if(UltrasonicController.readUSDistance()<D) {
+				leftMotor.stop(true);
+				rightMotor.stop(false);
+				isTurning=false;
 			}
+		}
 		Sound.beep();
 		thetaA=odometer.getThetaDegrees();
 		thetaA=normalizeTheta(thetaA);
