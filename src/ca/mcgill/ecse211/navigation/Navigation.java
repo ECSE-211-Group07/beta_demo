@@ -86,82 +86,17 @@ public class Navigation {
 
 	
 	public static void travelToCorrection(double x, double y) {
-		travelToCorrect(odometer.getX()/30.48, y);
-		LightLocalizer.doLocalization(odometer.getX()/30.48, y);
-		travelToCorrect(x, odometer.getY()/30.48);
-		LightLocalizer.doLocalization(x, y);
+		travelTo(odometer.getX()/30.48, (int) y/2);
+		LightLocalizer.doLocalization(odometer.getX()/30.48, (int) y/2, 4);
+		travelTo(odometer.getX()/30.48, y);
+		LightLocalizer.doLocalization(odometer.getX()/30.48, y, 4);
+		travelTo((int) x/2, odometer.getY()/30.48);
+		LightLocalizer.doLocalization((int) x/2, odometer.getY()/30.48, 4);
+		travelTo(x, odometer.getY()/30.48);
+		LightLocalizer.doLocalization(x, y, 4);
 	}
 	
-	public static void travelToCorrect(double x, double y) {
-		double error = error(x, y);
-		System.out.println("Error: " + error);
-		
-		if (error < 2) {
-			return;
-		}
-		travelToFree(x, y);
-		
-		while (isNavigating()) {
-			if (ColorController.leftLineDetected() && ColorController.rightLineDetected()) {
-				Sound.beep();
-			}
-			else if (ColorController.leftLineDetected() && !ColorController.rightLineDetected()) {
-				adjustRightMotor();
-				break;
-			} 
-			else if (ColorController.rightLineDetected() && !ColorController.leftLineDetected()) {
-				adjustLeftMotor();
-				break;
-			}
-		}
-		
-		System.out.println("Theta before: " + odometer.getTheta());
-//		System.out.println("X before: " + odometer.getX());
-//		System.out.println("Y before: " + odometer.getY());
-		correctPosition();
-		System.out.println("Theta after: " + odometer.getTheta());
-//		System.out.println("X after: " + odometer.getX());
-//		System.out.println("Y after: " + odometer.getY());
-		travelToCorrect(x, y);
-	}
 	
-	public static void adjustRightMotor() {
-		double startTime = System.currentTimeMillis();
-		double deltaTime;
-		startSynchronization();
-		leftMotor.stop();
-		rightMotor.stop();
-		endSynchronization();
-		rightMotor.forward();
-		while (!ColorController.rightLineDetected()) {
-			deltaTime = System.currentTimeMillis() - startTime;
-			if (deltaTime > 2000) {
-				rightMotor.backward();
-			}
-			rightMotor.setSpeed(100);
-		}
-		leftMotor.stop();
-		rightMotor.stop();
-	}
-	
-	public static void adjustLeftMotor() {
-		double startTime = System.currentTimeMillis();
-		double deltaTime;
-		startSynchronization();
-		leftMotor.stop();
-		rightMotor.stop();
-		endSynchronization();
-		leftMotor.forward();
-		while (!ColorController.leftLineDetected()) {
-			deltaTime = System.currentTimeMillis() - startTime;
-			if (deltaTime > 2000) {
-				leftMotor.backward();
-			}
-			leftMotor.setSpeed(100);
-		}
-		rightMotor.stop();
-		leftMotor.stop();
-	}
 	
 	public static double error(double x, double y) {
 		return Math.sqrt(Math.pow(odometer.getX() - x*30.48, 2) + Math.pow(odometer.getY() - y*30.48, 2));
