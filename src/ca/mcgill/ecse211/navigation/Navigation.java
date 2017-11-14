@@ -86,7 +86,7 @@ public class Navigation {
 		setTravelling(true);
 		travelToCorrectionX(x, odometer.getY()/30.48);
 		setTravelling(false);
-		travelToCorrectionY(odometer.getX(), y);
+		travelToCorrectionY(odometer.getX()/30.48, y);
 	}
 	
 	public static void travelToCorrectionY(double x, double y) {
