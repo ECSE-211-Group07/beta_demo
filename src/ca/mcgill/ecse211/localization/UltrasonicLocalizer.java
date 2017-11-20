@@ -25,8 +25,13 @@ public class UltrasonicLocalizer {
 	private static int dT;
 	private static double thetaA, thetaB;
 	
-	public static void doLocalization() {
+	public static void doLocalization(int corner) {
 		fallingEdge();
+		if (corner == 1 || corner == 3) {
+			Navigation.turnTo(90, false);
+		}
+		Navigation.driveDistance(20, false);
+		Navigation.driveDistance(10, true);
 	}
 	
 	
@@ -39,7 +44,6 @@ public class UltrasonicLocalizer {
 	 * @return nothing
 	 */
 	private static void fallingEdge() {
-//		Navigation.turnTo(-360, false);
 		//set rotation speed
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
@@ -108,12 +112,9 @@ public class UltrasonicLocalizer {
 		odometer.setPosition(new double [] {0, 0, 0}, 
 				new boolean [] {true, true, true});
 		
-		Navigation.driveDistance(25, false);
-		
 		odometer.setPosition(new double [] {0, 0, 0}, 
 				new boolean [] {true, true, true});
 		
-		Navigation.driveDistance(10, true);
 	}
 	
 	

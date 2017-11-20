@@ -27,7 +27,7 @@ public class Resources {
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
-	private static final double TRACK = 17.9;
+	private static final double TRACK = 13.85;
 	private static final double RADIUS = 2.093;
 
 	
@@ -42,13 +42,11 @@ public class Resources {
 	 * @param ultrasonicSensorPort Port at which the ultrasonic sensor is attached
 	 */
 	public Resources(String leftMotorPort, String rightMotorPort, 
-			String zipMotorPort, String lightSensorPortLeft, String lightSensorPortRight, 
+			String zipMotorPort,
 			String lightSensorPortMiddle, String ultrasonicSensorPort) {
 		leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(leftMotorPort));
 		rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(rightMotorPort));
 		zipMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(zipMotorPort));
-		lightSensorLeft = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortLeft));
-		lightSensorRight = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortRight));
 		lightSensorMiddle = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortMiddle));
 		ultrasonicSensor = new EV3UltrasonicSensor(LocalEV3.get().getPort(ultrasonicSensorPort));
 		usCont = new UltrasonicController();

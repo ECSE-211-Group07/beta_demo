@@ -15,12 +15,9 @@ public class Poller extends Thread {
 	private UltrasonicController usCont;
 	
 	
-	private SampleProvider colorSensorLeft = Resources.getColorSensorLeft().getMode("Red");
-	private SampleProvider colorSensorRight = Resources.getColorSensorRight().getMode("Red");
 	private SampleProvider colorSensorMiddle = Resources.getColorSensorMiddle().getMode("Red");
 	
-	private float[] colorDataLeft = new float[colorSensorLeft.sampleSize()];
-	private float[] colorDataRight = new float[colorSensorRight.sampleSize()];
+
 	private float[] colorDataMiddle = new float[colorSensorMiddle.sampleSize()];
 	private ColorController colorCont;
 	
@@ -41,15 +38,11 @@ public class Poller extends Thread {
 		float colorLeft, colorRight, colorMiddle;
 		while (true) {
 			us.fetchSample(usData, 0); // acquire data
-			colorSensorLeft.fetchSample(colorDataLeft, 0);
-			colorSensorRight.fetchSample(colorDataRight, 0);
 			colorSensorMiddle.fetchSample(colorDataMiddle, 0);
 			distance = (int) (usData[0] * 100.0); // extract from buffer, cast to int
-			colorLeft = colorDataLeft[0];
-			colorRight = colorDataRight[0];
 			colorMiddle = colorDataMiddle[0];
 			usCont.processUSData(distance); // now take action depending on value
-			colorCont.processColorData(colorLeft, colorRight, colorMiddle);
+			colorCont.processColorData(colorMiddle);
 			try {
 				Thread.sleep(50);
 			} catch (Exception e) {

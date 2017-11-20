@@ -16,13 +16,8 @@ import lejos.robotics.SampleProvider;
 public class LightLocalizer {
 
 	private static Odometer odometer = Resources.getOdometer();
-	private static double SENSOR_DISTANCE = 15.5;//18
+	private static double SENSOR_DISTANCE = 16.5;
 	private static double[] lightData = new double[5];
-	private static double[] lightDataRight = new double[5];
-	private static double[] lightDataLeft = new double[5];
-	
-	private static EV3LargeRegulatedMotor leftMotor = Resources.getLeftMotor();
-	private static EV3LargeRegulatedMotor rightMotor = Resources.getRightMotor();
 
 	/** Localizes about a point (x, y) by calling subsequent helper functions
 	 * @param x x coordinate relative to x = 0 to localize about
@@ -36,15 +31,13 @@ public class LightLocalizer {
 	 */
 	
 	public static void doLocalization(double x, double y) {
-		Navigation.pointTo(45);
 		rotateLightSensor();
 		correctPosition(x, y, 4);
 		Navigation.travelTo(x, y);
 	}
 	
-	public static void doLocalization(double x, double y, int corner) {
+	public static void doLocalization(int corner) {
 
-		// goToApproxOrigin();
 		if (corner == 0 || corner == 2) {
 			Navigation.pointTo(odometer.getThetaDegrees() + 45);
 		} else {
@@ -55,10 +48,10 @@ public class LightLocalizer {
 		rotateLightSensor();
 		Sound.beep();
 		// correct position of our robot using light sensor data
-		correctPosition(x, y, corner);
+		correctPosition(0, 0, corner);
 		
 		// travel to 0,0 then turn to the 0 angle
-		Navigation.travelTo(x, y);
+		Navigation.travelTo(0, 0);
 		
 		// Navigation.setSpeed(0,0);
 		
@@ -84,14 +77,6 @@ public class LightLocalizer {
 //				Sound.beepSequence();
 //			}
 		}
-		
-		//averageValues();
-	}
-	
-	private static void averageValues() {
-		for (int i=1; i < 5; i++) {
-			lightData[i] = (lightDataLeft[i] + lightDataRight[i])/2;
-		}
 	}
 	
 	
@@ -102,42 +87,21 @@ public class LightLocalizer {
 	 */
 	private static void correctPosition(double x, double y, int corner) {
 		//compute difference in angles
-		double deltaThetaY, deltaThetaX, Xnew = 0, Ynew = 0;
-		if (corner == 0 || corner == 2) {
-			if (corner == 0) {
-				deltaThetaY= Math.abs(lightData[4]-lightData[2]);
-				deltaThetaX= Math.abs(lightData[3]-lightData[1]);
-				Xnew = (x * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
-				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
-			} else {
-				deltaThetaY= Math.abs(lightData[4]-lightData[2]);
-				deltaThetaX= Math.abs(lightData[3]-lightData[1]);
-				Xnew = (x * 30.48)+SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
-				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
-			}
-			
-		} else if (corner == 1 || corner == 3) {
-			if (corner == 1) {
-				deltaThetaY= Math.abs(lightData[3]-lightData[1]);
-				deltaThetaX= Math.abs(lightData[4]-lightData[2]);
-				Xnew = (x * 30.48)+SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
-				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
-			} else {
-				deltaThetaY= Math.abs(lightData[3]-lightData[1]);
-				deltaThetaX= Math.abs(lightData[4]-lightData[2]);
-				Xnew = (x * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
-				Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
-			}
-			
+		double deltaThetaY, deltaThetaX, Xnew = 0, Ynew = 0 ;
+		if (corner == 0 || corner == 2 || corner == 4) {
+			deltaThetaY = Math.abs(lightData[4]-lightData[2]);
+			deltaThetaX = Math.abs(lightData[3]-lightData[1]);
 		} else {
-			if (Navigation.getHeading() == 0 || Navigation.getHeading() == 180) {
-				deltaThetaY= Math.abs(lightData[4]-lightData[2]);
-				deltaThetaX= Math.abs(lightData[3]-lightData[1]);
-			} else {
-				deltaThetaY= Math.abs(lightData[3]-lightData[1]);
-				deltaThetaX= Math.abs(lightData[4]-lightData[2]);
-			}
+			deltaThetaY = Math.abs(lightData[3]-lightData[1]);
+			deltaThetaX = Math.abs(lightData[4]-lightData[2]);
 		}
+		
+		if (corner == 0 || corner == 2 || corner == 4) {
+			Xnew = (x * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
+		} else if (corner == 1 || corner == 3) {
+			Xnew = (x * 30.48)+SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaY) / 2);
+		}
+		Ynew = (y * 30.48)-SENSOR_DISTANCE*Math.cos(Math.toRadians(deltaThetaX) / 2);
 		
 		
 		odometer.setPosition(new double [] {Xnew, Ynew, 0}, 

@@ -24,7 +24,7 @@ public class Navigation {
 	private static final double TRACK = Resources.getTrack();
 	private static final double SENSOR_DISTANCE = 13.0;
 
-	public static final int FORWARD_SPEED = 200, ROTATE_SPEED = 125, MOTOR_ACCELERATION = 50;
+	public static final int FORWARD_SPEED = 200, ROTATE_SPEED = 75, MOTOR_ACCELERATION = 50;
 
 	private static boolean travellingX = true;
 
@@ -75,33 +75,40 @@ public class Navigation {
 		
 		// move to the next point
 		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
-		leftMotor.rotate(convertDistance(RADIUS,distance), true);
-		rightMotor.rotate(convertDistance(RADIUS, distance), false);
+		rightMotor.setSpeed(FORWARD_SPEED + 8);
 		
-
+		
+		leftMotor.rotate(convertDistance(RADIUS,distance), true);
+		rightMotor.rotate(convertDistance(RADIUS, distance), true);
+		boolean isNavigating = true;
+		while (isNavigating) {
+			if (!leftMotor.isMoving() || !rightMotor.isMoving()) {
+				leftMotor.stop();
+				rightMotor.stop();
+				isNavigating = false;
+			}
+		}
+		
+		//leftMotor.rotate(convertDistance(RADIUS,distance), true);
+		//rightMotor.rotate(convertDistance(RADIUS, distance), false);
 	}	
 
+	/** Travels individually to desired x and y coordinates, correcting theta as needed
+	 * @param x
+	 * @param y
+	 */
 	public static void travelToCorrection(double x, double y) {
-		setTravelling(true);
-		travelToCorrectionX(x, odometer.getY()/30.48);
-		setTravelling(false);
-		travelToCorrectionY(odometer.getX()/30.48, y);
+		double currentY = nearestPoint(odometer.getY());
+		travelTo(x, currentY);
+		LightLocalizer.doLocalization(x, currentY);
+		double currentX = nearestPoint(odometer.getX());
+		travelTo(currentX, y);
+		LightLocalizer.doLocalization(currentX, y);
 	}
 	
-	public static void travelToCorrectionY(double x, double y) {
-		double prevX = odometer.getX();	
-		travelToCorrect(prevX/30.48, y);
-		LightLocalizer.doLocalization(nearestPoint(prevX), y);
-	}
-	
-	public static void travelToCorrectionX(double x, double y) {
-		double prevY = odometer.getY();
-		travelToCorrect(x, prevY/30.48);
-		LightLocalizer.doLocalization(x, nearestPoint(prevY));
-	}
-	
-	
+	/** Set to true if traveling in x 
+	 * @param x
+	 */
 	public static void setTravelling(boolean x) {
 		travellingX = x;
 	}
@@ -110,80 +117,11 @@ public class Navigation {
 		return Math.round((value)/30.48);
 	}
 	
-	public static void travelToCorrect(double x, double y) {
-		double error = error(x, y);
-		if (error < 2) {
-			return;
-		}
-		travelToFree(x, y);
-		
-		while (isNavigating()) {
-			if (ColorController.leftLineDetected() && ColorController.rightLineDetected()) {
-				Sound.beep();
-			}
-			else if (ColorController.leftLineDetected() && !ColorController.rightLineDetected()) {
-				adjustRightMotor();
-				break;
-			} 
-			else if (ColorController.rightLineDetected() && !ColorController.leftLineDetected()) {
-				adjustLeftMotor();
-				break;
-			}
-		}
-		
-		odometer.setTheta(getHeading());
-
-		if (travellingX) {
-			travelToCorrect(x, odometer.getY()/30.48);
-		} else {
-			travelToCorrect(odometer.getX()/30.48, y);
-		}
-		
-		
-	}
-	
-	public static void adjustRightMotor() {
-		double startTime = System.currentTimeMillis();
-		double deltaTime;
-		startSynchronization();
-		leftMotor.stop();
-		rightMotor.stop();
-		endSynchronization();
-		rightMotor.forward();
-		while (!ColorController.rightLineDetected()) {
-			deltaTime = System.currentTimeMillis() - startTime;
-			if (deltaTime > 2000) {
-				rightMotor.backward();
-			}
-			rightMotor.setSpeed(100);
-		}
-		startSynchronization();
-		leftMotor.stop();
-		rightMotor.stop();
-		endSynchronization();
-	}
-	
-	public static void adjustLeftMotor() {
-		double startTime = System.currentTimeMillis();
-		double deltaTime;
-		startSynchronization();
-		leftMotor.stop();
-		rightMotor.stop();
-		endSynchronization();
-		leftMotor.forward();
-		while (!ColorController.leftLineDetected()) {
-			deltaTime = System.currentTimeMillis() - startTime;
-			if (deltaTime > 2000) {
-				leftMotor.backward();
-			}
-			leftMotor.setSpeed(100);
-		}
-		startSynchronization();
-		leftMotor.stop();
-		rightMotor.stop();
-		endSynchronization();
-	}
-	
+	/** Calculate how far we are from where we want to be
+	 * @param x
+	 * @param y
+	 * @return error from desired point
+	 */
 	public static double error(double x, double y) {
 		return Math.sqrt(Math.pow(odometer.getX() - x*30.48, 2) + Math.pow(odometer.getY() - y*30.48, 2));
 	}
@@ -206,40 +144,6 @@ public class Navigation {
 		} else {
 			return currentHeading;
 		}
-	}
-	
-	
-	public static void travelToFree(double x, double y) {
-		x= x*30.48;
-		y= y*30.48;
-		
-		
-		double deltaX = x - odometer.getX();
-		double deltaY = y - odometer.getY();
-
-		// Calculate the degree you need to change to
-		double minAngle = Math.toDegrees(Math.atan2(deltaX, deltaY)) - odometer.getThetaDegrees();
-//		System.out.println("Min angle: " + minAngle);
-	
-		if (minAngle < -180) {
-			minAngle = 360 + minAngle;
-		} else if (minAngle > 180) {
-			minAngle = minAngle - 360;
-		}
-		
-		// turn to the minimum angle
-		turnTo(minAngle, false);
-		
-		// calculate the distance to next point
-		double distance  = Math.hypot(deltaX, deltaY);
-		
-		// move to the next point
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
-		leftMotor.rotate(convertDistance(RADIUS,distance), true);
-		rightMotor.rotate(convertDistance(RADIUS, distance), true);
-		double startTime = System.currentTimeMillis(); 
-		while (!(System.currentTimeMillis() - startTime > 2000));
 	}
 	
 	/**
@@ -390,8 +294,22 @@ public class Navigation {
 		rightMotor.setSpeed(300);
 		zipMotor.setSpeed(350);
 		zipMotor.backward();
-
-		driveLength(30.48 * 9);	
+		
+		driveLength(30.48 * 9);
+		
+		/*
+		 * while (colorSensor does not detect colors) {
+		 * 		zipMotor.forward();
+		 *
+		 * }
+		 * 
+		 * drive until black line detected
+		 * calculate what point robot is at
+		 * localize about that point
+		 * set odometer
+		 * 
+		 * 
+		 */
 	}
 	
 	
