@@ -50,8 +50,8 @@ public class Navigation {
 	 * threshold
 	 */
 	public static void travelTo(double x, double y) {
-		x= x*30.48;
-		y= y*30.48;
+		x = x * 30.48;
+		y = y * 30.48;
 		
 		double deltaX = x - odometer.getX();
 		double deltaY = y - odometer.getY();
@@ -69,6 +69,7 @@ public class Navigation {
 		
 		// turn to the minimum angle
 		turnTo(minAngle, false);
+		System.out.println("theta after turning min: " + odometer.getThetaDegrees());
 		
 		// calculate the distance to next point
 		double distance  = Math.hypot(deltaX, deltaY);

@@ -31,6 +31,9 @@ public class LightLocalizer {
 	 */
 	
 	public static void doLocalization(double x, double y) {
+		Navigation.turnTo(-90, false);
+		Navigation.driveDistance(2, true);
+		Navigation.pointTo(45);
 		rotateLightSensor();
 		correctPosition(x, y, 4);
 		Navigation.travelTo(x, y);
@@ -87,13 +90,22 @@ public class LightLocalizer {
 	 */
 	private static void correctPosition(double x, double y, int corner) {
 		//compute difference in angles
-		double deltaThetaY, deltaThetaX, Xnew = 0, Ynew = 0 ;
-		if (corner == 0 || corner == 2 || corner == 4) {
+		double deltaThetaY = 0, deltaThetaX = 0, Xnew = 0, Ynew = 0 ;
+		if (corner == 0 || corner == 2) {
 			deltaThetaY = Math.abs(lightData[4]-lightData[2]);
 			deltaThetaX = Math.abs(lightData[3]-lightData[1]);
-		} else {
+		} else if (corner == 1 || corner == 3){
 			deltaThetaY = Math.abs(lightData[3]-lightData[1]);
 			deltaThetaX = Math.abs(lightData[4]-lightData[2]);
+		} else {
+			double angleTravelling = Navigation.getHeading();
+			if (angleTravelling == 90 || angleTravelling == 270) {
+				deltaThetaY = Math.abs(lightData[3]-lightData[1]);
+				deltaThetaX = Math.abs(lightData[4]-lightData[2]);
+			} else {
+				deltaThetaY = Math.abs(lightData[4]-lightData[2]);
+				deltaThetaX = Math.abs(lightData[3]-lightData[1]);
+			}
 		}
 		
 		if (corner == 0 || corner == 2 || corner == 4) {

@@ -27,8 +27,9 @@ public class Tester {
 	
 	private static void initializeOdometer(int startCorner, Odometer odometer) {
 		if (startCorner == 0) {			
-			odometer.setX(1);
-			odometer.setY(1);
+			odometer.setX(1 * 30.48);
+			odometer.setY(1 * 30.48);
+			Sound.beepSequence();
 		} else if (startCorner == 1) {
 			odometer.setX(7 * 30.48);
 			odometer.setY(1 * 30.48);
@@ -38,6 +39,9 @@ public class Tester {
 		} else if (startCorner == 3) {
 			odometer.setX(1 * 30.48);
 			odometer.setY(7 * 30.48);
+			Navigation.pointTo(0);
+			odometer.setTheta(180);
+			Sound.beepSequence();
 		}
 	}
 
@@ -47,13 +51,12 @@ public class Tester {
 		final TextLCD t=LocalEV3.get().getTextLCD();
 		Odometer odometer = Resources.getOdometer();
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
-		// OdometryDisplay odometryDisplay=new OdometryDisplay(odometer,t);
 		Poller poller = new Poller(Resources.getUltrasonicController(), Resources.getColorController());
 		ColorController color = new ColorController();
 
 		//WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
-		int buttonChoice, zipX = 0, zipY = 0, x0 = 2, y0 = 2, startCorner = 1
+		int buttonChoice, zipX = 0, zipY = 0, x0 = 2, y0 = 2, startCorner = 0
 						, redTeamNo = 0, greenTeamNo = 0;
 		
 		odometer.start();
@@ -97,17 +100,23 @@ public class Tester {
 				case WIFI:
 					state = State.InitialLocalization;
 				case InitialLocalization:
-					UltrasonicLocalizer.doLocalization(startCorner);
-					odometer.setTheta(0);
-					LightLocalizer.doLocalization(startCorner);
-					initializeOdometer(startCorner, odometer);
-					System.out.println("x: " + odometer.getX());
-					System.out.println("y: " + odometer.getY());
-					System.out.println("theta: " + odometer.getTheta());
-					Navigation.travelTo(4, 1);
-					LightLocalizer.doLocalization(4, 1);
-					Navigation.travelTo(4, 2);
-					state = State.Navigation;
+					
+					Navigation.pointTo(90);
+					Navigation.pointTo(180);
+					Navigation.pointTo(0);
+//					UltrasonicLocalizer.doLocalization(startCorner);
+//					odometer.setTheta(0);
+//					LightLocalizer.doLocalization(startCorner);
+//					initializeOdometer(startCorner, odometer);
+//					Navigation.pointTo(0);
+//					System.out.println("x: " + odometer.getX());
+//					System.out.println("y: " + odometer.getY());
+//					System.out.println("theta: " + odometer.getTheta());
+//					Navigation.travelTo(1, 4);
+//					LightLocalizer.doLocalization(1, 4);
+//					Navigation.travelTo(3, 4);
+//					LightLocalizer.doLocalization(3, 4);
+//					state = State.Navigation;
 					
 				case Navigation:
 					break;
