@@ -69,29 +69,17 @@ public class Navigation {
 		
 		// turn to the minimum angle
 		turnTo(minAngle, false);
-		System.out.println("theta after turning min: " + odometer.getThetaDegrees());
 		
 		// calculate the distance to next point
 		double distance  = Math.hypot(deltaX, deltaY);
 		
 		// move to the next point
 		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED + 8);
+		rightMotor.setSpeed((float) (FORWARD_SPEED * (1 + Resources.getSpeedMult())));
 		
 		
-		leftMotor.rotate(convertDistance(RADIUS,distance), true);
-		rightMotor.rotate(convertDistance(RADIUS, distance), true);
-		boolean isNavigating = true;
-		while (isNavigating) {
-			if (!leftMotor.isMoving() || !rightMotor.isMoving()) {
-				leftMotor.stop();
-				rightMotor.stop();
-				isNavigating = false;
-			}
-		}
-		
-		//leftMotor.rotate(convertDistance(RADIUS,distance), true);
-		//rightMotor.rotate(convertDistance(RADIUS, distance), false);
+		leftMotor.rotate(convertDistance(RADIUS, distance / (1 + Resources.getSpeedMult())), true);
+		rightMotor.rotate(convertDistance(RADIUS, distance), false);
 	}	
 
 	/** Travels individually to desired x and y coordinates, correcting theta as needed
@@ -160,6 +148,7 @@ public class Navigation {
 		
 		leftMotor.rotate(angle, true);
 		rightMotor.rotate(-angle, block);
+		
 	}
 	
 	
@@ -235,7 +224,7 @@ public class Navigation {
 	 * @param leftM speed of the left motor
 	 * @param rightM speed of the right motor
 	 */
-	public static void setSpeed(int leftM, int rightM) {
+	public static void setSpeed(float leftM, float rightM) {
 		leftMotor.setSpeed(leftM);
 		rightMotor.setSpeed(rightM);
 		

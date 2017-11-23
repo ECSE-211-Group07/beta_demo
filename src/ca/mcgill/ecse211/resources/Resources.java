@@ -27,8 +27,9 @@ public class Resources {
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
-	private static final double TRACK = 13.85;
+	private static final double TRACK = 13.35;
 	private static final double RADIUS = 2.093;
+	private static final double SPEED_MULT = 0.03;
 
 	
 	/**
@@ -98,6 +99,14 @@ public class Resources {
 	 */
 	public static double getTrack() {
 		return TRACK;
+	}
+	
+	/** Used to return the speed multiplier that increases the speed of the right motor due to
+	 * an unbalanced center of mass
+	 * @return double
+	 */
+	public static double getSpeedMult() {
+		return SPEED_MULT;
 	}
 	
 	/**

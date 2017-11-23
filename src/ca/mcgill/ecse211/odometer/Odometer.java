@@ -48,7 +48,7 @@ public class Odometer extends Thread {
 			
 			// Get current tachometer values
 			currentLeftMotorTachoCount = leftMotor.getTachoCount();
-			currentRightMotorTachoCount = rightMotor.getTachoCount();
+			currentRightMotorTachoCount = (int) (rightMotor.getTachoCount() / (1 + Resources.getSpeedMult()));
 			
 			// Compare it with the previous value to get the change
 			int leftDeltaTacho = currentLeftMotorTachoCount - prevLeftMotorTachoCount;

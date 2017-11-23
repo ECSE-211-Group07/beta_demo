@@ -20,7 +20,7 @@ public class UltrasonicLocalizer {
 	private static TextLCD LCD=LocalEV3.get().getTextLCD();
 	private static Odometer odometer = Resources.getOdometer();
 
-	private static final int ROTATE_SPEED=200;
+	private static final int ROTATE_SPEED = 175;
 	private static final int D=55;
 	private static int dT;
 	private static double thetaA, thetaB;
@@ -31,7 +31,6 @@ public class UltrasonicLocalizer {
 			Navigation.turnTo(90, false);
 		}
 		Navigation.driveDistance(20, false);
-		Navigation.driveDistance(10, true);
 	}
 	
 	

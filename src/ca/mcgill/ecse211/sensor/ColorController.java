@@ -40,4 +40,8 @@ public class ColorController {
 	public static boolean middleLineDetected() {
 		return middleLineDetected;
 	}
+	
+	public static float getColorValMiddle() {
+		return colorValMiddle;
+	}
 }

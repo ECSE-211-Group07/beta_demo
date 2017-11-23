@@ -29,13 +29,21 @@ public class Tester {
 		if (startCorner == 0) {			
 			odometer.setX(1 * 30.48);
 			odometer.setY(1 * 30.48);
+			Navigation.pointTo(0);
+			odometer.setTheta(0);
 			Sound.beepSequence();
 		} else if (startCorner == 1) {
 			odometer.setX(7 * 30.48);
 			odometer.setY(1 * 30.48);
+			Navigation.pointTo(0);
+			odometer.setTheta(0);
+			Sound.beepSequence();
 		} else if (startCorner == 2) {
 			odometer.setX(7 * 30.48);
 			odometer.setY(7 * 30.48);
+			Navigation.pointTo(0);
+			odometer.setTheta(180);
+			Sound.beepSequence();
 		} else if (startCorner == 3) {
 			odometer.setX(1 * 30.48);
 			odometer.setY(7 * 30.48);
@@ -56,7 +64,7 @@ public class Tester {
 
 		//WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
-		int buttonChoice, zipX = 0, zipY = 0, x0 = 2, y0 = 2, startCorner = 0
+		int buttonChoice, zipX = 0, zipY = 0, x0 = 2, y0 = 2, startCorner = 1
 						, redTeamNo = 0, greenTeamNo = 0;
 		
 		odometer.start();
@@ -100,22 +108,49 @@ public class Tester {
 				case WIFI:
 					state = State.InitialLocalization;
 				case InitialLocalization:
+					Navigation.setSpeed(200, 200);
+					Navigation.driveDistance(10, false);
+					odometer.setTheta(0);
+					Navigation.driveDistance(13, true);
+					Navigation.turnTo(-90, false);
+					Navigation.driveDistance(10, false);
+					Navigation.driveDistance(13, true);
+					initializeOdometer(startCorner, odometer);
+					Navigation.travelTo(2, 1);
+					System.out.println("theta before localization: " + odometer.getTheta());
+					LightLocalizer.doLocalization(2, 1);
+					System.out.println("theta after localization: " + odometer.getTheta());
+					Navigation.travelTo(2, 2);
+					Navigation.driveZipline();
+	
 					
-					Navigation.pointTo(90);
-					Navigation.pointTo(180);
-					Navigation.pointTo(0);
+//					Navigation.setSpeed(100, 100);
+//					Navigation.driveDistance(10, false);
+//					Navigation.driveDistance(13, true);
+//					odometer.setTheta(0);
+//					Navigation.turnTo(90, false);
+//					Navigation.driveDistance(10, false);
+//					Navigation.driveDistance(13, true);
+//					odometer.setTheta(90);
+//					odometer.setX(30.48);
+//					odometer.setY(30.48);
+//					Navigation.travelTo(3, 1);
+//					odometer.setTheta(90);
+//					LightLocalizer.doLocalization(3, 1);
+//					Navigation.travelTo(3, 3);
+					
+					
+					
 //					UltrasonicLocalizer.doLocalization(startCorner);
 //					odometer.setTheta(0);
 //					LightLocalizer.doLocalization(startCorner);
 //					initializeOdometer(startCorner, odometer);
-//					Navigation.pointTo(0);
-//					System.out.println("x: " + odometer.getX());
-//					System.out.println("y: " + odometer.getY());
-//					System.out.println("theta: " + odometer.getTheta());
-//					Navigation.travelTo(1, 4);
-//					LightLocalizer.doLocalization(1, 4);
-//					Navigation.travelTo(3, 4);
-//					LightLocalizer.doLocalization(3, 4);
+//					System.out.println("x before travelTo: " + odometer.getX());
+//					System.out.println("y before travelTo: " + odometer.getY());
+//					System.out.println("theta before travelTo: " + odometer.getTheta());
+//					Navigation.travelTo(3, 1);
+//					LightLocalizer.doLocalization(3, 1);
+//					Navigation.travelTo(3, 2);
 //					state = State.Navigation;
 					
 				case Navigation:
