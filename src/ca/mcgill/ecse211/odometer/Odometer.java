@@ -23,6 +23,9 @@ public class Odometer extends Thread {
 
 	// lock object for mutual exclusion
 	public Object lock;
+	
+	//boolean to know if robot is turning
+	private static boolean isTurning = false;
 
 	// default constructor
 	public Odometer() {
@@ -211,6 +214,10 @@ public class Odometer extends Thread {
 		synchronized (lock) {
 			this.theta = Math.toRadians(theta);
 		}
+	}
+	
+	public void setIsTurning(boolean bool) {
+		isTurning = bool;
 	}
 
 	/**

@@ -142,13 +142,36 @@ public class Navigation {
 	 * @param block Whether or not the execution of the turn should block threads
 	 */
 	public static void turnTo(double theta, boolean block) {
+		double mult = (1 + Resources.getSpeedMult());
+		double currentTheta = odometer.getThetaDegrees();
 		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.setSpeed((float) (ROTATE_SPEED * mult));
 		int angle = convertAngle(RADIUS, TRACK, theta);
 		
-		leftMotor.rotate(angle, true);
+		leftMotor.rotate((int) (angle / mult), true);
 		rightMotor.rotate(-angle, block);
 		
+		while (!ColorController.middleLineDetected()) {
+			leftMotor.forward();
+			rightMotor.backward();
+		}
+		Sound.beep();
+		leftMotor.stop(true);
+		rightMotor.stop(false);
+		regularTurnTo(-10,false);
+		odometer.setTheta(currentTheta + theta);
+		
+	}
+	
+	public static void regularTurnTo(double theta, boolean block) {
+		double mult = (1 + Resources.getSpeedMult());
+		double currentTheta = odometer.getThetaDegrees();
+		leftMotor.setSpeed(ROTATE_SPEED);
+		rightMotor.setSpeed((float) (ROTATE_SPEED * mult));
+		int angle = convertAngle(RADIUS, TRACK, theta);
+		
+		leftMotor.rotate((int) (angle / mult), true);
+		rightMotor.rotate(-angle, block);
 	}
 	
 	

@@ -42,7 +42,7 @@ public class LightLocalizer {
 			Navigation.pointTo(45);
 			Navigation.driveDistance(7, false);
 		} else if (currentHeading == 90) {
-			Navigation.pointTo(45);
+			Navigation.pointTo(135);
 			Navigation.driveDistance(7, false);
 		} else if (currentHeading == 180) {
 			Navigation.pointTo(225);

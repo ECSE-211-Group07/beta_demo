@@ -1,6 +1,5 @@
 package ca.mcgill.ecse211.beta;
 
-
 import java.util.Map;
 
 import ca.mcgill.ecse211.localization.LightLocalizer;
@@ -21,12 +20,43 @@ public class Tester {
 
 	private static final String SERVER_IP = "192.168.43.193";
 	private static final int TEAM_NUMBER = 7;
-	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
-	private enum State {WIFI, InitialLocalization, Navigation, Localization, Zipline};
+	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
+
+	private enum State {
+		WIFI, InitialLocalization, NavigateZip, NavigateRiver, TraverseZip, TraverseRiver, BlockSearch, ReturnZip, ReturnRiver
+	};
+
 	private static State state = State.WIFI;
-	
+
+	private static int X, Y;
+	private static int buttonChoice, startCorner = 0, ZO_R_x = 0, ZO_R_y = 0, ZC_R_x = 0, ZC_R_y = 0, ZO_G_x = 0,
+			ZO_G_y = 0, ZC_G_x = 0, ZC_G_y = 0, SH_LL_x = 0, SH_LL_y = 0, SH_UR_x = 0, SH_UR_y = 0, SV_LL_x = 0,
+			SV_LL_y = 0, SV_UR_x = 0, SV_UR_y = 0, redTeamNo = 0, greenTeamNo = 0;
+
+	private static void changeState(State currentState) {
+		switch (currentState) {
+		case WIFI:
+			state = State.InitialLocalization;
+			break;
+		case InitialLocalization:
+			if (greenTeamNo == TEAM_NUMBER) {
+				state = State.NavigateZip;
+			} else {
+				state = State.NavigateRiver;
+			}
+			break;
+		case NavigateZip:
+			state = State.TraverseZip;
+			break;
+
+		case NavigateRiver:
+			state = State.TraverseRiver;
+			break;
+		}
+	}
+
 	private static void initializeOdometer(int startCorner, Odometer odometer) {
-		if (startCorner == 0) {			
+		if (startCorner == 0) {
 			odometer.setX(1 * 30.48);
 			odometer.setY(1 * 30.48);
 			Navigation.pointTo(0);
@@ -56,113 +86,80 @@ public class Tester {
 	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) {
 		Resources resources = new Resources("A", "D", "B", "S4", "S3");
-		final TextLCD t=LocalEV3.get().getTextLCD();
+		final TextLCD t = LocalEV3.get().getTextLCD();
 		Odometer odometer = Resources.getOdometer();
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 		Poller poller = new Poller(Resources.getUltrasonicController(), Resources.getColorController());
 		ColorController color = new ColorController();
 
-		//WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
-		int buttonChoice, zipX = 0, zipY = 0, x0 = 2, y0 = 2, startCorner = 1
-						, redTeamNo = 0, greenTeamNo = 0;
-		
 		odometer.start();
 		odometryDisplay.start();
 		poller.start();
-		
-//		do {
-//			t.clear();
-//			t.drawString("  PRESS ENTER  ", 0, 1);
-//			t.drawString("  TO START           ", 0, 2);
-//			buttonChoice = Button.waitForAnyPress();
-//		} while (buttonChoice != Button.ID_ENTER);
-//	
-//		try {
-//			Map data = conn.getData();
-//			redTeamNo = ((Long) data.get("RedTeam")).intValue();
-//			greenTeamNo = ((Long) data.get("GreenTeam")).intValue();
-//			
-//			if (redTeamNo == 7) {
-//				x0 = ((Long) data.get("ZO_R_x")).intValue();
-//				y0 = ((Long) data.get("ZO_R_y")).intValue();
-//				zipX = ((Long) data.get("ZC_R_x")).intValue();
-//				zipY = ((Long) data.get("ZC_R_y")).intValue();
-//				startCorner = ((Long) data.get("RedCorner")).intValue();
-//			} else {
-//				x0 = ((Long) data.get("ZO_G_x")).intValue();
-//				y0 = ((Long) data.get("ZO_G_y")).intValue();
-//				zipX = ((Long) data.get("ZC_G_x")).intValue();
-//				zipY = ((Long) data.get("ZC_G_y")).intValue();
-//				startCorner = ((Long) data.get("GreenCorner")).intValue();
-//			}
-//			
-//		
-//		} catch (Exception e) {
-//			//System.err.println("Error: " + e.getMessage());
-//		}
-		t.clear();
-		
-		while (true) {
-			switch (state) {
-				case WIFI:
-					state = State.InitialLocalization;
-				case InitialLocalization:
-					Navigation.setSpeed(200, 200);
-					Navigation.driveDistance(10, false);
-					odometer.setTheta(0);
-					Navigation.driveDistance(13, true);
-					Navigation.turnTo(-90, false);
-					Navigation.driveDistance(10, false);
-					Navigation.driveDistance(13, true);
-					initializeOdometer(startCorner, odometer);
-					Navigation.travelTo(2, 1);
-					System.out.println("theta before localization: " + odometer.getTheta());
-					LightLocalizer.doLocalization(2, 1);
-					System.out.println("theta after localization: " + odometer.getTheta());
-					Navigation.travelTo(2, 2);
-					Navigation.driveZipline();
-	
-					
-//					Navigation.setSpeed(100, 100);
-//					Navigation.driveDistance(10, false);
-//					Navigation.driveDistance(13, true);
-//					odometer.setTheta(0);
-//					Navigation.turnTo(90, false);
-//					Navigation.driveDistance(10, false);
-//					Navigation.driveDistance(13, true);
-//					odometer.setTheta(90);
-//					odometer.setX(30.48);
-//					odometer.setY(30.48);
-//					Navigation.travelTo(3, 1);
-//					odometer.setTheta(90);
-//					LightLocalizer.doLocalization(3, 1);
-//					Navigation.travelTo(3, 3);
-					
-					
-					
-//					UltrasonicLocalizer.doLocalization(startCorner);
-//					odometer.setTheta(0);
-//					LightLocalizer.doLocalization(startCorner);
-//					initializeOdometer(startCorner, odometer);
-//					System.out.println("x before travelTo: " + odometer.getX());
-//					System.out.println("y before travelTo: " + odometer.getY());
-//					System.out.println("theta before travelTo: " + odometer.getTheta());
-//					Navigation.travelTo(3, 1);
-//					LightLocalizer.doLocalization(3, 1);
-//					Navigation.travelTo(3, 2);
-//					state = State.Navigation;
-					
-				case Navigation:
-					break;
+
+		try {
+			Map data = conn.getData();
+			redTeamNo = ((Long) data.get("RedTeam")).intValue();
+			greenTeamNo = ((Long) data.get("GreenTeam")).intValue();
+
+			ZO_R_x = ((Long) data.get("ZO_R_x")).intValue();
+			ZO_R_y = ((Long) data.get("ZO_R_y")).intValue();
+			ZC_R_x = ((Long) data.get("ZC_R_x")).intValue();
+			ZC_R_y = ((Long) data.get("ZC_R_y")).intValue();
+			startCorner = ((Long) data.get("RedCorner")).intValue();
+			ZO_G_x = ((Long) data.get("ZO_G_x")).intValue();
+			ZO_G_y = ((Long) data.get("ZO_G_y")).intValue();
+			ZC_G_x = ((Long) data.get("ZC_G_x")).intValue();
+			ZC_G_y = ((Long) data.get("ZC_G_y")).intValue();
+			if (greenTeamNo == 7) {
+				startCorner = ((Long) data.get("GreenCorner")).intValue();
+			} else {
+				startCorner = ((Long) data.get("RedCorner")).intValue();
 			}
 			
-			
-			while(Button.waitForAnyPress()!=Button.ID_ESCAPE);
+		} catch (Exception e) {
+			// System.err.println("Error: " + e.getMessage());
+		}
+		t.clear();
+		Navigation.turnTo(90, false);
+
+		/*
+		while (true) {
+			switch (state) {
+			case WIFI:
+				changeState(state);
+
+			case InitialLocalization:
+				UltrasonicLocalizer.doLocalization(startCorner);
+				initializeOdometer(startCorner, odometer);
+				changeState(state);
+
+			case NavigateZip:
+				if (greenTeamNo == 7) {
+					Navigation.travelTo(ZO_G_x, ZO_G_y);
+					LightLocalizer.doLocalization(ZO_G_x, ZO_G_y);
+					Navigation.travelTo(ZC_G_x, ZC_G_y);
+					changeState(state);
+				} else {
+					Navigation.travelTo(ZO_R_x, ZO_R_y);
+				}
+				changeState(state);
+				break;
+
+			case NavigateRiver:
+				Navigation.travelTo(SH_LL_x, SH_LL_y);
+				changeState(state);
+
+			case TraverseZip:
+				Navigation.driveZipline();
+			}
+
+			while (Button.waitForAnyPress() != Button.ID_ESCAPE)
+				;
 			System.exit(0);
 		}
-		
-		
+		*/
 
 	}
 }
