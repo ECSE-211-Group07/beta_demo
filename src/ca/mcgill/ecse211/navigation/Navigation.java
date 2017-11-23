@@ -78,8 +78,8 @@ public class Navigation {
 		rightMotor.setSpeed((float) (FORWARD_SPEED * (1 + Resources.getSpeedMult())));
 		
 		
-		leftMotor.rotate(convertDistance(RADIUS, distance / (1 + Resources.getSpeedMult())), true);
-		rightMotor.rotate(convertDistance(RADIUS, distance), false);
+		leftMotor.rotate(convertDistance(RADIUS, distance), true);
+		rightMotor.rotate(convertDistance(RADIUS, distance*(1 + Resources.getSpeedMult())), false);
 	}	
 
 	/** Travels individually to desired x and y coordinates, correcting theta as needed
@@ -148,9 +148,9 @@ public class Navigation {
 		rightMotor.setSpeed((float) (ROTATE_SPEED * mult));
 		int angle = convertAngle(RADIUS, TRACK, theta);
 		
-		leftMotor.rotate((int) (angle / mult), true);
-		rightMotor.rotate(-angle, block);
-		
+		leftMotor.rotate(angle, true);
+		rightMotor.rotate((int)(-angle*mult), block);
+		if(((theta >=85 && theta<=90) || theta == 180 || theta==270) && !ColorController.middleLineDetected() ){
 		while (!ColorController.middleLineDetected()) {
 			leftMotor.forward();
 			rightMotor.backward();
@@ -160,7 +160,7 @@ public class Navigation {
 		rightMotor.stop(false);
 		regularTurnTo(-10,false);
 		odometer.setTheta(currentTheta + theta);
-		
+		}
 	}
 	
 	public static void regularTurnTo(double theta, boolean block) {
@@ -207,6 +207,7 @@ public class Navigation {
 	 * @param forward whether the robot will be going backwards or forwards
 	 */
 	public static void driveDistance(int distance, boolean forward) {
+
 		if (forward) {
 			leftMotor.rotate(convertDistance(RADIUS, distance), true);
 			rightMotor.rotate(convertDistance(RADIUS, distance), false);

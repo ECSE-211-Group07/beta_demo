@@ -31,7 +31,7 @@ public class Tester {
 	private static int X, Y;
 	private static int buttonChoice, startCorner = 0, ZO_R_x = 0, ZO_R_y = 0, ZC_R_x = 0, ZC_R_y = 0, ZO_G_x = 0,
 			ZO_G_y = 0, ZC_G_x = 0, ZC_G_y = 0, SH_LL_x = 0, SH_LL_y = 0, SH_UR_x = 0, SH_UR_y = 0, SV_LL_x = 0,
-			SV_LL_y = 0, SV_UR_x = 0, SV_UR_y = 0, redTeamNo = 0, greenTeamNo = 0;
+			SV_LL_y = 0, SV_UR_x = 0, SV_UR_y = 0, redTeamNo = 0, greenTeamNo = 7;
 
 	private static void changeState(State currentState) {
 		switch (currentState) {
@@ -122,24 +122,24 @@ public class Tester {
 			// System.err.println("Error: " + e.getMessage());
 		}
 		t.clear();
-		Navigation.turnTo(90, false);
 
-		/*
+		
 		while (true) {
 			switch (state) {
 			case WIFI:
 				changeState(state);
 
 			case InitialLocalization:
+				//Navigation.turnTo(360, false);
 				UltrasonicLocalizer.doLocalization(startCorner);
 				initializeOdometer(startCorner, odometer);
 				changeState(state);
 
 			case NavigateZip:
 				if (greenTeamNo == 7) {
-					Navigation.travelTo(ZO_G_x, ZO_G_y);
-					LightLocalizer.doLocalization(ZO_G_x, ZO_G_y);
-					Navigation.travelTo(ZC_G_x, ZC_G_y);
+					Navigation.travelTo(5, 1);
+					LightLocalizer.doLocalization(5, 1);
+					Navigation.travelTo(5, 2);
 					changeState(state);
 				} else {
 					Navigation.travelTo(ZO_R_x, ZO_R_y);
@@ -159,7 +159,7 @@ public class Tester {
 				;
 			System.exit(0);
 		}
-		*/
+		
 
 	}
 }
