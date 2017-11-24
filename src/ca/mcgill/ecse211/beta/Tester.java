@@ -155,12 +155,12 @@ public class Tester {
 				
 				if (distSH < distSV) {
 					Navigation.travelToCorrection(SH_LL_x - 0.5, SH_LL_y - 0.5);
-					Navigation.travelTo(SH_UR_x, SH_UR_y);
-					Navigation.travelTo(SV_LL_x, SV_LL_y);
+					Navigation.travelTo(SH_UR_x - 0.5, SH_UR_y - 0.5);
+					Navigation.travelTo(SV_LL_x - 0.5, SV_LL_y - 0.5);
 				} else {
 					Navigation.travelToCorrection(SV_LL_x - 0.5, SV_LL_y - 0.5);
-					Navigation.travelTo(SH_UR_x, SH_UR_y);
-					Navigation.travelTo(SH_LL_x, SH_LL_y);
+					Navigation.travelTo(SH_UR_x - 0.5, SH_UR_y - 0.5);
+					Navigation.travelTo(SH_LL_x - 0.5, SH_LL_y - 0.5);
 				}
 				changeState(state);
 
