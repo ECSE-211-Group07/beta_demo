@@ -50,7 +50,11 @@ public class Tester {
 			break;
 
 		case NavigateRiver:
-			state = State.TraverseRiver;
+			state = State.NavigateZip;
+			break;
+			
+		case TraverseZip:
+			state = State.NavigateRiver;
 			break;
 		}
 	}
@@ -130,30 +134,61 @@ public class Tester {
 				changeState(state);
 
 			case InitialLocalization:
-				//Navigation.turnTo(360, false);
 				UltrasonicLocalizer.doLocalization(startCorner);
 				initializeOdometer(startCorner, odometer);
 				changeState(state);
 
 			case NavigateZip:
 				if (greenTeamNo == 7) {
-					Navigation.travelTo(5, 1);
-					LightLocalizer.doLocalization(5, 1);
-					Navigation.travelTo(5, 2);
+					Navigation.travelToCorrection(ZO_G_x, ZO_G_y);
+					LightLocalizer.doLocalization(ZO_G_x, ZO_G_y);
+					Navigation.travelToCorrection(ZC_G_x, ZC_G_y);
 					changeState(state);
 				} else {
-					Navigation.travelTo(ZO_R_x, ZO_R_y);
+					Navigation.travelToCorrection(ZO_R_x, ZO_R_y);
 				}
 				changeState(state);
-				break;
 
 			case NavigateRiver:
-				Navigation.travelTo(SH_LL_x, SH_LL_y);
+				double distSH = Math.sqrt((SH_LL_x*30.48-odometer.getX()) * (SH_LL_x*30.48-odometer.getX()) + (SH_LL_y * 30.48 -odometer.getY()) * (SH_LL_y * 30.48-odometer.getY()));
+				double distSV = Math.sqrt((SV_LL_x*30.48-odometer.getX()) * (SV_LL_x*30.48-odometer.getX()) + (SV_LL_y * 30.48 -odometer.getY()) * (SV_LL_y * 30.48-odometer.getY()));
+				
+				if (distSH < distSV) {
+					Navigation.travelToCorrection(SH_LL_x - 0.5, SH_LL_y - 0.5);
+					Navigation.travelTo(SH_UR_x, SH_UR_y);
+					Navigation.travelTo(SV_LL_x, SV_LL_y);
+				} else {
+					Navigation.travelToCorrection(SV_LL_x - 0.5, SV_LL_y - 0.5);
+					Navigation.travelTo(SH_UR_x, SH_UR_y);
+					Navigation.travelTo(SH_LL_x, SH_LL_y);
+				}
 				changeState(state);
 
 			case TraverseZip:
 				Navigation.driveZipline();
-			}
+				
+			case TraverseRiver:
+				
+				
+			case BlockSearch:
+				double currentHeading = Navigation.getHeading();
+				if (currentHeading == 0) {
+					odometer.setY(odometer.getY() + 4 * 30.48);
+				} else if (currentHeading == 180) {
+					odometer.setY(odometer.getY() - 4 * 30.48);
+				} else if (currentHeading == 90) {
+					odometer.setX(odometer.getX() + 4 * 30.48);
+				} else if (currentHeading == 270) {
+					odometer.setX(odometer.getX() - 4 * 30.48);
+				} else if (currentHeading == 45) {
+					odometer.setX(odometer.getX() + 86.21);
+					odometer.setY(odometer.getY() + 86.21);
+				} else if (currentHeading == 315) {
+					odometer.setX(odometer.getX() - 86.21);
+					odometer.setY(odometer.getY() - 86.21);
+				}
+				changeState(state);
+			} 
 
 			while (Button.waitForAnyPress() != Button.ID_ESCAPE)
 				;
