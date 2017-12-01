@@ -16,9 +16,11 @@ public class Poller extends Thread {
 	
 	
 	private SampleProvider colorSensorMiddle = Resources.getColorSensorMiddle().getMode("Red");
+	private SampleProvider colorSensorFront = Resources.getColorSensorFront().getMode("RGB");
 	
 
 	private float[] colorDataMiddle = new float[colorSensorMiddle.sampleSize()];
+	private float[] colorDataFront = new float[colorSensorFront.sampleSize()];
 	private ColorController colorCont;
 	
 	
@@ -35,14 +37,18 @@ public class Poller extends Thread {
 	
 	public void run() {
 		int distance;
-		float colorLeft, colorRight, colorMiddle;
+		float colorMiddle, colorFrontR, colorFrontG, colorFrontB;
 		while (true) {
 			us.fetchSample(usData, 0); // acquire data
 			colorSensorMiddle.fetchSample(colorDataMiddle, 0);
+			colorSensorFront.fetchSample(colorDataFront, 0);
 			distance = (int) (usData[0] * 100.0); // extract from buffer, cast to int
 			colorMiddle = colorDataMiddle[0];
+			colorFrontR = colorDataFront[0];
+			colorFrontG = colorDataFront[1];
+			colorFrontB = colorDataFront[2];
 			usCont.processUSData(distance); // now take action depending on value
-			colorCont.processColorData(colorMiddle);
+			colorCont.processColorData(colorMiddle, colorFrontR, colorFrontG, colorFrontB);
 			try {
 				Thread.sleep(50);
 			} catch (Exception e) {

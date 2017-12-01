@@ -6,6 +6,7 @@ package ca.mcgill.ecse211.sensor;
  */
 public class UltrasonicController {
 	private static int distance;
+	private static int blockDist = 50;
 	public static Object lock = new Object();
 	
 	public UltrasonicController() {}
@@ -20,11 +21,18 @@ public class UltrasonicController {
 
 	
 	/** Returns local variable distance which represents current ultrasonic reading
-	 * @return
+	 * @return current ultrasonic reading
 	 */
 	public static int readUSDistance() {
 		synchronized(lock) {
 			return distance;
 		}
 	};
+	
+	/** Returns variable depending if ultrasonic reading is less than blockDist class variable
+	 * @return boolean indicating if block has been detected
+	 */
+	public static boolean blockDetected() {
+		return (readUSDistance() < blockDist);
+	}
 }

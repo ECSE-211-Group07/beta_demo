@@ -13,7 +13,7 @@ import lejos.robotics.SampleProvider;
 /**
  * Class that enables robot to localize to theta = 0 using ultrasonic sensor
  * 
- * @author Marine Huynh, Sihui Shen
+ * @author Adam Gobran, Reda El Khili
  *
  */
 public class UltrasonicLocalizer {
@@ -27,6 +27,9 @@ public class UltrasonicLocalizer {
 	private static int dT;
 	private static double thetaA, thetaB;
 
+	/** Ultrasonic localizes depending on corner we are placed. Uses rever
+	 * @param corner Corner parameter passed via wifi
+	 */
 	public static void doLocalization(int corner) {
 		fallingEdge();
 		Navigation.driveDistance(10, false);

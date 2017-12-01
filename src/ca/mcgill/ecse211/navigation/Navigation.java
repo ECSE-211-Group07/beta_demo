@@ -11,7 +11,7 @@ import lejos.robotics.RegulatedMotor;
 
 /** Navigation uses simple trigonometry along with information obtained from the odometer to be able to 
  * allow the robot to travel to certain x and y coordinates, or turn a specified number of degrees
- * @author Marine Huynh, Sihui Shen
+ * @author Adam Gobran, Ali Shobeiri
  *
  */
 public class Navigation {
@@ -141,29 +141,8 @@ public class Navigation {
 	 * @param theta The angle at which the robot needs to turn too
 	 * @param block Whether or not the execution of the turn should block threads
 	 */
-	public static void turnTo(double theta, boolean block) {
-		double mult = (1 + Resources.getSpeedMult());
-		double currentTheta = odometer.getThetaDegrees();
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed((float) (ROTATE_SPEED * mult));
-		int angle = convertAngle(RADIUS, TRACK, theta);
-		
-		leftMotor.rotate(angle, true);
-		rightMotor.rotate((int)(-angle*mult), block);
-		if(((theta >=85 && theta<=90) || theta == 180 || theta==270) && !ColorController.middleLineDetected() ){
-		while (!ColorController.middleLineDetected()) {
-			leftMotor.forward();
-			rightMotor.backward();
-		}
-		Sound.beep();
-		leftMotor.stop(true);
-		rightMotor.stop(false);
-		regularTurnTo(-10,false);
-		odometer.setTheta(currentTheta + theta);
-		}
-	}
 	
-	public static void regularTurnTo(double theta, boolean block) {
+	public static void turnTo(double theta, boolean block) {
 		double mult = (1 + Resources.getSpeedMult());
 		double currentTheta = odometer.getThetaDegrees();
 		leftMotor.setSpeed(ROTATE_SPEED);
@@ -307,23 +286,18 @@ public class Navigation {
 		leftMotor.setSpeed(300);
 		rightMotor.setSpeed(300);
 		zipMotor.setSpeed(350);
-		zipMotor.backward();
+	
+		//continue driving until robot has dismounted zipline and driven far enough to detect a line
+		while(!ColorController.middleLineDetected()) {
+			leftMotor.forward();
+			rightMotor.forward();
+			zipMotor.backward();
+		}
 		
-		driveLength(30.48 * 9);
-		
-		/*
-		 * while (colorSensor does not detect colors) {
-		 * 		zipMotor.forward();
-		 *
-		 * }
-		 * 
-		 * drive until black line detected
-		 * calculate what point robot is at
-		 * localize about that point
-		 * set odometer
-		 * 
-		 * 
-		 */
+		//stop motors
+		leftMotor.stop();
+		rightMotor.stop();
+		zipMotor.stop();
 	}
 	
 	

@@ -29,13 +29,6 @@ public class LightLocalizer {
 	 * @param y
 	 *            y coordinate relative to y = 0 to localize about
 	 */
-
-	/*
-	 * TODO We must add a condition where it localizes to the closest point it is
-	 * at, ie if it has travelled 30.48, 30.48 it will determine that it needs to
-	 * localize on 1, 1 Takes away work from us
-	 */
-
 	public static void doLocalization(double x, double y) {
 		double currentHeading = Navigation.getHeading();
 		if (currentHeading == 0) {
@@ -56,6 +49,10 @@ public class LightLocalizer {
 		Navigation.travelTo(x, y);
 	}
 
+	/** This method overrides the previously defined doLocalization and is used specifically
+	 * for localizing in a corner
+	 * @param corner Corner parameter passed via wifi
+	 */
 	public static void doLocalization(int corner) {
 
 		if (corner == 0 || corner == 2) {
@@ -133,6 +130,11 @@ public class LightLocalizer {
 
 	}
 
+	/** This method corrects our odometer theta based on the previously obtained light sensor data
+	 * @param x desired x position
+	 * @param y desired y position
+	 * @param heading current heading
+	 */
 	private static void correctPosition(double x, double y, double heading) {
 		double deltaThetaY = 0, deltaThetaX = 0, Xnew = 0, Ynew = 0;
 		if (heading == 90 || heading == 270) {

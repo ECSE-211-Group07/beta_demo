@@ -23,7 +23,7 @@ public class Resources {
 	private static EV3LargeRegulatedMotor zipMotor;
 	private static EV3UltrasonicSensor ultrasonicSensor;
 	private static UltrasonicController usCont;
-	private static EV3ColorSensor lightSensorLeft, lightSensorRight, lightSensorMiddle;
+	private static EV3ColorSensor lightSensorMiddle, lightSensorFront;
 	private static ColorController colorCont;
 	private static Odometer odometer;
 	private static OdometryDisplay odometryDisplay;
@@ -44,11 +44,12 @@ public class Resources {
 	 */
 	public Resources(String leftMotorPort, String rightMotorPort, 
 			String zipMotorPort,
-			String lightSensorPortMiddle, String ultrasonicSensorPort) {
+			String lightSensorPortMiddle, String lightSensorPortFront, String ultrasonicSensorPort) {
 		leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(leftMotorPort));
 		rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(rightMotorPort));
 		zipMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort(zipMotorPort));
 		lightSensorMiddle = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortMiddle));
+		lightSensorFront = new EV3ColorSensor(LocalEV3.get().getPort(lightSensorPortFront));
 		ultrasonicSensor = new EV3UltrasonicSensor(LocalEV3.get().getPort(ultrasonicSensorPort));
 		usCont = new UltrasonicController();
 		colorCont = new ColorController();
@@ -63,26 +64,17 @@ public class Resources {
 	 * 
 	 * @return EV3ColorSensor
 	 */
-	public static EV3ColorSensor getColorSensorLeft() {
-		return lightSensorLeft;
-	}
-	
-	/**
-	 * Used to return the light sensor on left of robot
-	 * 
-	 * @return EV3ColorSensor
-	 */
 	public static EV3ColorSensor getColorSensorMiddle() {
 		return lightSensorMiddle;
 	}
 	
 	/**
-	 * Used to return the light sensor on right of robot
+	 * Used to return the light sensor on front of robot to detect blocks
 	 * 
 	 * @return EV3ColorSensor
 	 */
-	public static EV3ColorSensor getColorSensorRight() {
-		return lightSensorRight;
+	public static EV3ColorSensor getColorSensorFront() {
+		return lightSensorFront;
 	}
 	
 	/** Used to return the ColorController which interfaces with the Poller class
